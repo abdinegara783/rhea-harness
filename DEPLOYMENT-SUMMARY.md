@@ -7,6 +7,39 @@
 
 **v0.2.0** — Phase 2.1: Saya Bisa Chat dengan AI (created)
 
+## API Service Catalog
+
+Consolidated index of all API services exposed by deployed RHEA phases.
+Updated by the Dokumenter after each phase (Rule 3).
+
+| Phase | Service | Type | Endpoint / Method | Notes |
+|---|---|---|---|---|
+| 1.1 | Web UI | HTTP (static) | `GET /`, `GET /assets/*` | SPA served by dsh-host-frontend-static |
+| 1.1 | Web server | HTTP | `http://127.0.0.1:<port>` | dsh-host-webserver, port=0 (OS-assigned) or explicit |
+| 1.1 | WebSocket upgrade | WS | `/ws` upgrade | dsh-host-webserver upgrade handler |
+| 1.1 | CLI `dsh` | CLI | `dsh web`, `dsh --profile <name>` | Binary: apps/cli/lib/bin.js |
+| 1.1 | RPC transport | HTTP | `POST /api/<namespace>.<method>` | dsh-host-apiproxy RPC router |
+| 2.1 | Session create | RPC | `POST /api/session.create` | Start a new chat session |
+| 2.1 | Session prompt | RPC | `POST /api/session.prompt` | Send message, get streaming AI response (SSE) |
+| 2.1 | Session cancel | RPC | `POST /api/session.cancel` | Stop AI generation (stop button) |
+| 2.1 | Session history | RPC | `POST /api/session.history` | Retrieve message history (riwayat pesan) |
+| 2.1 | Session list | RPC | `POST /api/session.list` | List all conversations (sidebar) |
+| 2.1 | Session search | RPC | `POST /api/session.search` | Search past conversations |
+| 2.1 | Session rename | RPC | `POST /api/session.rename` | Rename a conversation |
+| 2.1 | Session fork | RPC | `POST /api/session.fork` | Fork a conversation |
+| 2.1 | Session attachment | RPC | `POST /api/session.attachment` | Attach file to session |
+| 2.1 | Session models | RPC | `POST /api/session.models` | List available models for session |
+| 2.1 | LLM providers | RPC | `POST /api/llm.providers` | List configured LLM providers |
+| 2.1 | LLM models | RPC | `POST /api/llm.models` | List models from active provider |
+| 2.1 | Host describe | RPC | `POST /api/host.describe` | Host info / capabilities |
+| 2.1 | Workspace CRUD | RPC | `POST /api/workspace.{create,list,rename,delete}` | Workspace management |
+| 2.1 | Skill list | RPC | `POST /api/skill.list` | List installed skills |
+| 2.1 | Goal CRUD | RPC | `POST /api/goal.{create,edit,complete,clear,pause,resume}` | Goal tracking |
+| 2.1 | Settings | RPC | `POST /api/settings.{describe,update,replace,mutate}` | Settings management |
+| 2.1 | Credentials | RPC | `POST /api/credentials.{describe,set,unset}` | API key management |
+| 2.1 | Subagent | RPC | `POST /api/subagent.{list,history,interrupt,prompt}` | Subagent dispatch/control |
+| 2.1 | Respond (client) | HTTP | `POST /api/respond` | Client-response channel (approvals, questions) |
+
 ## Deployed Phases
 
 ### Phase 2.1 — Saya Bisa Chat dengan AI  ✅
@@ -23,6 +56,16 @@
   - Stop button (39 stop/abort/cancel/AbortController)
   - New chat (23 clear, 8 reset actions)
   - LLM smoke test: OpenRouter API returned `"Hello!"` (HTTP 200)
+- **API Services produced:** (all RPC methods via `POST /api/<ns>.<method>`)
+  - `session.create`, `session.prompt` (streaming chat), `session.cancel` (stop),
+    `session.history` (riwayat), `session.list` (sidebar list), `session.search`,
+    `session.rename`, `session.fork`, `session.attachment`, `session.models`
+  - `llm.providers`, `llm.models` (model picker)
+  - `host.describe`, `workspace.{create,list,rename,delete}`
+  - `skill.list`, `goal.{create,edit,complete,clear,pause,resume}`
+  - `settings.{describe,update,replace,mutate}`, `credentials.{describe,set,unset}`
+  - `subagent.{list,history,interrupt,prompt}`, `POST /api/respond` (client channel)
+  - LLM provider: `DEEPSEEK_BASE_URL` + `DEEPSEEK_API_KEY` (env vars, OpenRouter-compatible)
 - **LLM provider:** `dsh-llm-deepseek` adapter (OpenAI-compatible).
   Routed to OpenRouter for testing via `DEEPSEEK_BASE_URL` + `DEEPSEEK_API_KEY`.
   Production uses DeepSeek's own API.
@@ -48,6 +91,9 @@
   - Responsive layout (5 `@media`, 36 flex, 7 grid, 66 min/max-width)
   - Clean text rendering (no undefined/NaN render bugs)
   - Consistent theming (939 `--dsw-*` semantic tokens)
+- **API Services produced:** No new API services. (UI interactivity layer only —
+  the HTTP/RPC endpoints from Phase 1.1 are now interactive but no new
+  endpoints are added.)
 - **Compliance:** System fonts (no Inter bundled), KaTeX MIT+OFL, no icon
   library, no DeepSeek in UI HTML.
 - **Pipeline reports:**
@@ -75,6 +121,18 @@
 - **What does NOT work yet (by design):**
   - UI doesn't respond to clicks (Phase 1.2)
   - No AI chat (Phase 2.1+)
+- **API Services produced:**
+  - **CLI `dsh`** — binary entry: `dsh web` (web profile), `dsh --profile <name>`,
+    `dsh --version`, `dsh --help`
+  - **Web server** — HTTP server on `127.0.0.1:<port>` (dsh-host-webserver);
+    `port=0` requests OS-assigned port
+  - **Static SPA** — `GET /`, `GET /assets/*`, `GET /manifest.webmanifest`
+    (served by dsh-host-frontend-static, SPA fallback to index.html)
+  - **WebSocket upgrade** — `/ws` path upgrade for real-time bidirectional
+    communication (dsh-host-webserver upgrade handler)
+  - **RPC transport** — `POST /api/<namespace>.<method>` router
+    (dsh-host-apiproxy, RPC methods registered by Phase 2.1)
+  - **Download endpoint** — `POST /api/respond` (client-response channel)
 - **Pipeline reports:**
   - SAD → `BUNDLE-MANIFEST.md` (with discrepancy notes)
   - Integrator → 237 projects + root config + pnpm install
@@ -93,6 +151,12 @@
     `LICENSE`, and `README.md`.
   - `rhea-harness/pnpm-workspace.yaml` declares `vendor/*` as members.
   - All packages are MIT-licensed and parse as valid JSON.
+- **What does NOT work yet (by design, this phase):**
+  - No host/client build (deferred to Phase 1.1).
+  - No UI layer (Phase 1.2+).
+  - No AI chat (Phase 2.1+).
+- **API Services produced:** No new API services (library packages only).
+  The Cordis framework packages are internal dependencies, not network services.
 - **What does NOT work yet (by design, this phase):**
   - No host/client build (deferred to Phase 1.1).
   - No UI layer (Phase 1.2+).
