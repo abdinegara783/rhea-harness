@@ -7,6 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-08-19
+
+### Added — Phase 2.2: Sesi Chat Tersimpan
+
+- Verified all session/storage persistence packages (already deployed in Phase 1.1):
+  `dsh-session-persistence`, `dsh-session-persistence-jsonl`,
+  `dsh-session-persistence-sqlite`, `dsh-session-projection`,
+  `dsh-session-projection-cache`, `dsh-session-stats`, `dsh-session-title`,
+  `dsh-storage`, `dsh-storage-domain`, `dsh-storage-json`, `dsh-storage-sqlite`.
+- Verified the persistence layer is functional end-to-end via RPC API tests.
+
+### SAD findings
+
+- Journey summary listed 6 packages, all with wrong paths. Real packages are
+  sub-packages under `packages/session/` and `packages/storage/`. The summary's
+  `dsh-session-query`, `dsh-client-session-sidebar`, `dsh-client-session-manager`,
+  `dsh-client-ui-session-list` do not exist as separate packages — search is
+  in `session.search` RPC, sidebar UI is `dsh-client-ui-layout`.
+
+### Verified (real RPC persistence test)
+
+- AC 1: Created session, sent "Remember the number 42", AI responded, killed
+  server, restarted, session survived with all 37 events + title intact — PASS
+- AC 2: session.history returns full message history (sidebar reopen) — PASS
+- AC 3: Two sessions with different messages, no cross-contamination — PASS
+- AC 4: session.rename works (title edit); delete via workspace removal
+  (host/session-removed event) — PASS
+- AC 5: Appended message to old chat, 3 user messages persisted — PASS
+- Compliance: SQLite public domain, data local (no cloud), branding RHEA — PASS
+
+### Next
+
+- Phase 3.1 (v0.3.0) — Saya Bisa Baca & Cari File (prerequisite 2.1 satisfied).
+
 ## [0.2.0] - 2026-08-19
 
 ### Added — Phase 2.1: Saya Bisa Chat dengan AI

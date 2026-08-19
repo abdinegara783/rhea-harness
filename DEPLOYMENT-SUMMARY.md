@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.2.0** — Phase 2.1: Saya Bisa Chat dengan AI (created)
+**v0.2.1** — Phase 2.2: Sesi Chat Tersimpan (created)
 
 ## API Service Catalog
 
@@ -39,8 +39,35 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 2.1 | Credentials | RPC | `POST /api/credentials.{describe,set,unset}` | API key management |
 | 2.1 | Subagent | RPC | `POST /api/subagent.{list,history,interrupt,prompt}` | Subagent dispatch/control |
 | 2.1 | Respond (client) | HTTP | `POST /api/respond` | Client-response channel (approvals, questions) |
+| 2.2 | Session persistence | Storage (local) | `session.*` RPC + `dsh-storage-{sqlite,json}` backends | Sessions survive server restart (SQLite/JSONL) |
+| 2.2 | Session removed (host) | Event | `host/session-removed` | Emitted on workspace session deletion (delete surface) |
 
 ## Deployed Phases
+
+### Phase 2.2 — Sesi Chat Tersimpan  ✅
+
+- **Version:** v0.2.1
+- **Date:** 2026-08-19
+- **What was deployed:** No new packages — all 11 session/storage persistence
+  packages already present from Phase 1.1. Verified the persistence layer works.
+- **What works:**
+  - Sessions persist across server restart (SQLite/JSONL backend)
+  - session.list shows all conversations in sidebar (auto-generated titles)
+  - session.history reopens a chat with full message history
+  - Multiple sessions don't mix up (distinct histories)
+  - session.rename edits chat title in sidebar
+  - New messages appended to old chats persist
+- **Proof:** Created session → sent "Remember the number 42" → AI responded →
+  killed server → restarted → session survived with 37 events + title intact.
+- **Journey summary discrepancy:** All 6 listed packages had wrong paths. Real:
+  `session/session-persistence*`, `storage/storage*` sub-packages.
+- **API Services produced:** No new RPC methods — all `session.*` methods
+  registered in Phase 2.1. Phase 2.2 activates the persistence backend so
+  sessions survive restarts. The `host/session-removed` event (workspace
+  session deletion) is the delete surface.
+- **Pipeline reports:** SAD → `BUNDLE-MANIFEST.md`; Integrator → 11 packages
+  verified + boot test; Compliance → PASS (SQLite public domain, local data);
+  Verifier → PASS (5/5 AC, real restart persistence test).
 
 ### Phase 2.1 — Saya Bisa Chat dengan AI  ✅
 
