@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-08-19
+
+### Added — Phase 1.2: UI Web Merespon
+
+- Verified all 7 client UI packages (already deployed in Phase 1.1) are
+  present and linked: `dsh-client-web`, `dsh-client-web-react`,
+  `dsh-client-ui-primitives`, `dsh-client-ui-slots`, `dsh-client-connection`,
+  `dsh-client-runtime`, `dsh-client-locale` — all MIT, pre-built `lib/`.
+- Confirmed the pre-built web dist (`apps/web/dist/`) contains a full
+  interactive React UI: 43 onClick handlers, 21 onDrag handlers, 2
+  ResizeObserver instances, 27 `:hover` CSS rules, 939 `--dsw-*` theme tokens,
+  responsive flex/grid layout with 5 `@media` queries.
+
+### Compliance findings
+
+- Fonts: system font stack only (no Inter bundled). KaTeX fonts (59 files) for
+  math rendering — MIT (code) + OFL-1.1 (fonts). Both permissive.
+- Icons: no Lucide/react-icons bundled. UI uses inline SVG/CSS-drawn icons.
+- i18n: `langs/` dir is Shiki code highlighting (46 languages), not UI strings.
+- Branding: `<title>RHEA — Your Reliable QC Assistant</title>` — no DeepSeek in
+  user-facing HTML.
+
+### Verified
+
+- AC 1 (click response): 27 `:hover`, 29 `cursor:pointer`, 7 `:focus-visible`,
+  9 transitions, 43 onClick/11 onChange/6 onKeyDown — PASS
+- AC 2 (drag panel): 21 onDrag, 2 ResizeObserver, 5 onMouseMove — PASS
+- AC 3 (responsive layout): 5 `@media`, 36 flex, 7 grid, 66 min/max-width — PASS
+- AC 4 (text render): 0 `'undefined'` strings, 4 NaN (all `isNaN()` utils) — PASS
+- AC 5 (theme): 939 `--dsw-*` + 24 `--ds-*` semantic alias tokens — PASS
+- Boot test: `dsh web` → served interactive bundle at `http://127.0.0.1:53427`
+
+### Next
+
+- Phase 2.1 (v0.2.0) — Saya Bisa Chat dengan AI (prerequisite 1.2 now satisfied).
+
 ## [0.1.1] - 2026-08-19
 
 ### Added — Phase 1.1: Rhea Bisa Dibuka

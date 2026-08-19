@@ -5,9 +5,30 @@
 
 ## Current Version
 
-**v0.1.1** — Phase 1.1: Rhea Bisa Dibuka (created)
+**v0.1.2** — Phase 1.2: UI Web Merespon (created)
 
 ## Deployed Phases
+
+### Phase 1.2 — UI Web Merespon  ✅
+
+- **Version:** v0.1.2
+- **Date:** 2026-08-19
+- **What was deployed:** No new packages — all 7 client UI packages were
+  already present from Phase 1.1 (full monorepo). This phase verified the
+  pre-built web dist is interactive.
+- **What works:**
+  - Click/hover/focus visual response (27 `:hover`, 29 `cursor:pointer`, 43 onClick)
+  - Drag/resize panels (21 onDrag, 2 ResizeObserver, 5 onMouseMove)
+  - Responsive layout (5 `@media`, 36 flex, 7 grid, 66 min/max-width)
+  - Clean text rendering (no undefined/NaN render bugs)
+  - Consistent theming (939 `--dsw-*` semantic tokens)
+- **Compliance:** System fonts (no Inter bundled), KaTeX MIT+OFL, no icon
+  library, no DeepSeek in UI HTML.
+- **Pipeline reports:**
+  - SAD → `BUNDLE-MANIFEST.md` (verify-only, no new packages)
+  - Integrator → verified 7 packages + dist present, web boots
+  - Compliance → PASS (fonts/icons/i18n/branding all clean)
+  - Verifier → PASS (5/5 acceptance criteria)
 
 ### Phase 1.1 — Rhea Bisa Dibuka  ✅
 
@@ -62,10 +83,11 @@
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
 | 1.1 | v0.1.1 | Rhea Bisa Dibuka | 0.1 | created |
-| 1.2 | v0.1.2 | UI Web Merespon | 1.1 | pending |
+| 1.2 | v0.1.2 | UI Web Merespon | 1.1 | created |
 | 2.1 | v0.2.0 | Saya Bisa Chat dengan AI | 1.2 | pending |
 
 ## How to continue
 
-Run `/deploy` again — the pipeline auto-detects Phase 1.2 as the next pending
-phase (its prerequisite 1.1 is now `created`).
+Run `/deploy` again — the pipeline auto-detects Phase 2.1 as the next pending
+phase (its prerequisite 1.2 is now `created`). Phase 2.1 introduces AI chat —
+LLM testing will use `OPENROUTER_API_KEY` from `.env` (Rule 1).
