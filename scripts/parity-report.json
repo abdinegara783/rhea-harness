@@ -1,0 +1,531 @@
+{
+  "generated": "2026-08-19T06:40:36.238Z",
+  "overall": {
+    "original": 843197,
+    "replica": 854884,
+    "parity": 101.4
+  },
+  "folders": [
+    {
+      "folder": "(root files)",
+      "original": 23296,
+      "replica": 26094,
+      "parity": 112,
+      "originalFiles": 36,
+      "replicaFiles": 40
+    },
+    {
+      "folder": ".agents",
+      "original": 83668,
+      "replica": 83668,
+      "parity": 100,
+      "originalFiles": 2077,
+      "replicaFiles": 2077
+    },
+    {
+      "folder": ".github",
+      "original": 4001,
+      "replica": 4001,
+      "parity": 100,
+      "originalFiles": 27,
+      "replicaFiles": 27
+    },
+    {
+      "folder": "apps/cli",
+      "original": 5767,
+      "replica": 5767,
+      "parity": 100,
+      "originalFiles": 43,
+      "replicaFiles": 43
+    },
+    {
+      "folder": "apps/web",
+      "original": 24732,
+      "replica": 24732,
+      "parity": 100,
+      "originalFiles": 206,
+      "replicaFiles": 206
+    },
+    {
+      "folder": "assets",
+      "original": 0,
+      "replica": 0,
+      "parity": 100,
+      "originalFiles": 0,
+      "replicaFiles": 0
+    },
+    {
+      "folder": "demos",
+      "original": 0,
+      "replica": 176,
+      "parity": null,
+      "originalFiles": 0,
+      "replicaFiles": 6
+    },
+    {
+      "folder": "docs",
+      "original": 55534,
+      "replica": 55534,
+      "parity": 100,
+      "originalFiles": 320,
+      "replicaFiles": 320
+    },
+    {
+      "folder": "examples",
+      "original": 22939,
+      "replica": 22943,
+      "parity": 100,
+      "originalFiles": 356,
+      "replicaFiles": 356
+    },
+    {
+      "folder": "native",
+      "original": 2398,
+      "replica": 2398,
+      "parity": 100,
+      "originalFiles": 48,
+      "replicaFiles": 48
+    },
+    {
+      "folder": "packages/acp",
+      "original": 1962,
+      "replica": 1962,
+      "parity": 100,
+      "originalFiles": 19,
+      "replicaFiles": 19
+    },
+    {
+      "folder": "packages/api",
+      "original": 5023,
+      "replica": 5003,
+      "parity": 99.6,
+      "originalFiles": 33,
+      "replicaFiles": 33
+    },
+    {
+      "folder": "packages/attachment",
+      "original": 1157,
+      "replica": 1157,
+      "parity": 100,
+      "originalFiles": 25,
+      "replicaFiles": 25
+    },
+    {
+      "folder": "packages/boot",
+      "original": 4590,
+      "replica": 4590,
+      "parity": 100,
+      "originalFiles": 26,
+      "replicaFiles": 26
+    },
+    {
+      "folder": "packages/bundle",
+      "original": 2963,
+      "replica": 2963,
+      "parity": 100,
+      "originalFiles": 36,
+      "replicaFiles": 36
+    },
+    {
+      "folder": "packages/client",
+      "original": 162271,
+      "replica": 162271,
+      "parity": 100,
+      "originalFiles": 1093,
+      "replicaFiles": 1093
+    },
+    {
+      "folder": "packages/code-runtime",
+      "original": 4376,
+      "replica": 4376,
+      "parity": 100,
+      "originalFiles": 32,
+      "replicaFiles": 32
+    },
+    {
+      "folder": "packages/compaction",
+      "original": 9274,
+      "replica": 9274,
+      "parity": 100,
+      "originalFiles": 54,
+      "replicaFiles": 54
+    },
+    {
+      "folder": "packages/context",
+      "original": 11453,
+      "replica": 11453,
+      "parity": 100,
+      "originalFiles": 52,
+      "replicaFiles": 52
+    },
+    {
+      "folder": "packages/core",
+      "original": 43263,
+      "replica": 42703,
+      "parity": 98.7,
+      "originalFiles": 152,
+      "replicaFiles": 151
+    },
+    {
+      "folder": "packages/credentials",
+      "original": 2294,
+      "replica": 2294,
+      "parity": 100,
+      "originalFiles": 25,
+      "replicaFiles": 25
+    },
+    {
+      "folder": "packages/e2b",
+      "original": 7181,
+      "replica": 7181,
+      "parity": 100,
+      "originalFiles": 34,
+      "replicaFiles": 34
+    },
+    {
+      "folder": "packages/examples",
+      "original": 3701,
+      "replica": 3701,
+      "parity": 100,
+      "originalFiles": 36,
+      "replicaFiles": 36
+    },
+    {
+      "folder": "packages/extensions",
+      "original": 22231,
+      "replica": 22231,
+      "parity": 100,
+      "originalFiles": 87,
+      "replicaFiles": 87
+    },
+    {
+      "folder": "packages/feedback",
+      "original": 2752,
+      "replica": 2752,
+      "parity": 100,
+      "originalFiles": 25,
+      "replicaFiles": 25
+    },
+    {
+      "folder": "packages/fs",
+      "original": 15023,
+      "replica": 15022,
+      "parity": 100,
+      "originalFiles": 95,
+      "replicaFiles": 95
+    },
+    {
+      "folder": "packages/goal",
+      "original": 6804,
+      "replica": 6804,
+      "parity": 100,
+      "originalFiles": 49,
+      "replicaFiles": 49
+    },
+    {
+      "folder": "packages/guard",
+      "original": 1541,
+      "replica": 1541,
+      "parity": 100,
+      "originalFiles": 19,
+      "replicaFiles": 19
+    },
+    {
+      "folder": "packages/hooks",
+      "original": 5812,
+      "replica": 5812,
+      "parity": 100,
+      "originalFiles": 53,
+      "replicaFiles": 53
+    },
+    {
+      "folder": "packages/host",
+      "original": 23833,
+      "replica": 23833,
+      "parity": 100,
+      "originalFiles": 144,
+      "replicaFiles": 144
+    },
+    {
+      "folder": "packages/identity",
+      "original": 417,
+      "replica": 417,
+      "parity": 100,
+      "originalFiles": 12,
+      "replicaFiles": 12
+    },
+    {
+      "folder": "packages/interaction",
+      "original": 5293,
+      "replica": 5293,
+      "parity": 100,
+      "originalFiles": 54,
+      "replicaFiles": 54
+    },
+    {
+      "folder": "packages/jobs",
+      "original": 4398,
+      "replica": 4398,
+      "parity": 100,
+      "originalFiles": 31,
+      "replicaFiles": 31
+    },
+    {
+      "folder": "packages/llm",
+      "original": 22179,
+      "replica": 22179,
+      "parity": 100,
+      "originalFiles": 116,
+      "replicaFiles": 116
+    },
+    {
+      "folder": "packages/lsp",
+      "original": 6268,
+      "replica": 6268,
+      "parity": 100,
+      "originalFiles": 50,
+      "replicaFiles": 50
+    },
+    {
+      "folder": "packages/mcp",
+      "original": 3692,
+      "replica": 3692,
+      "parity": 100,
+      "originalFiles": 19,
+      "replicaFiles": 19
+    },
+    {
+      "folder": "packages/plan",
+      "original": 2397,
+      "replica": 2397,
+      "parity": 100,
+      "originalFiles": 16,
+      "replicaFiles": 16
+    },
+    {
+      "folder": "packages/preset",
+      "original": 4582,
+      "replica": 4582,
+      "parity": 100,
+      "originalFiles": 47,
+      "replicaFiles": 47
+    },
+    {
+      "folder": "packages/runtime-diagnostics",
+      "original": 788,
+      "replica": 788,
+      "parity": 100,
+      "originalFiles": 8,
+      "replicaFiles": 8
+    },
+    {
+      "folder": "packages/sandbox",
+      "original": 10209,
+      "replica": 10209,
+      "parity": 100,
+      "originalFiles": 73,
+      "replicaFiles": 73
+    },
+    {
+      "folder": "packages/schedule",
+      "original": 4706,
+      "replica": 4706,
+      "parity": 100,
+      "originalFiles": 25,
+      "replicaFiles": 25
+    },
+    {
+      "folder": "packages/sdk",
+      "original": 5083,
+      "replica": 5083,
+      "parity": 100,
+      "originalFiles": 39,
+      "replicaFiles": 39
+    },
+    {
+      "folder": "packages/session",
+      "original": 24202,
+      "replica": 24202,
+      "parity": 100,
+      "originalFiles": 146,
+      "replicaFiles": 146
+    },
+    {
+      "folder": "packages/session-query",
+      "original": 13295,
+      "replica": 13295,
+      "parity": 100,
+      "originalFiles": 71,
+      "replicaFiles": 71
+    },
+    {
+      "folder": "packages/settings",
+      "original": 4312,
+      "replica": 4312,
+      "parity": 100,
+      "originalFiles": 29,
+      "replicaFiles": 29
+    },
+    {
+      "folder": "packages/shell",
+      "original": 12761,
+      "replica": 12761,
+      "parity": 100,
+      "originalFiles": 96,
+      "replicaFiles": 96
+    },
+    {
+      "folder": "packages/skill",
+      "original": 7360,
+      "replica": 7360,
+      "parity": 100,
+      "originalFiles": 37,
+      "replicaFiles": 37
+    },
+    {
+      "folder": "packages/spill",
+      "original": 2070,
+      "replica": 2070,
+      "parity": 100,
+      "originalFiles": 30,
+      "replicaFiles": 30
+    },
+    {
+      "folder": "packages/storage",
+      "original": 4095,
+      "replica": 4095,
+      "parity": 100,
+      "originalFiles": 51,
+      "replicaFiles": 51
+    },
+    {
+      "folder": "packages/stubs",
+      "original": 0,
+      "replica": 60,
+      "parity": null,
+      "originalFiles": 0,
+      "replicaFiles": 12
+    },
+    {
+      "folder": "packages/subagent",
+      "original": 27916,
+      "replica": 27916,
+      "parity": 100,
+      "originalFiles": 150,
+      "replicaFiles": 150
+    },
+    {
+      "folder": "packages/subprocess",
+      "original": 4624,
+      "replica": 4624,
+      "parity": 100,
+      "originalFiles": 30,
+      "replicaFiles": 30
+    },
+    {
+      "folder": "packages/terminal",
+      "original": 6393,
+      "replica": 6393,
+      "parity": 100,
+      "originalFiles": 38,
+      "replicaFiles": 38
+    },
+    {
+      "folder": "packages/test-support",
+      "original": 14795,
+      "replica": 14775,
+      "parity": 99.9,
+      "originalFiles": 106,
+      "replicaFiles": 106
+    },
+    {
+      "folder": "packages/todo",
+      "original": 1304,
+      "replica": 1303,
+      "parity": 99.9,
+      "originalFiles": 17,
+      "replicaFiles": 17
+    },
+    {
+      "folder": "packages/typert",
+      "original": 16127,
+      "replica": 16126,
+      "parity": 100,
+      "originalFiles": 86,
+      "replicaFiles": 86
+    },
+    {
+      "folder": "packages/util",
+      "original": 3404,
+      "replica": 3404,
+      "parity": 100,
+      "originalFiles": 59,
+      "replicaFiles": 59
+    },
+    {
+      "folder": "packages/web",
+      "original": 7537,
+      "replica": 7537,
+      "parity": 100,
+      "originalFiles": 72,
+      "replicaFiles": 72
+    },
+    {
+      "folder": "packages/workflow",
+      "original": 8959,
+      "replica": 8959,
+      "parity": 100,
+      "originalFiles": 57,
+      "replicaFiles": 57
+    },
+    {
+      "folder": "packages/workspace",
+      "original": 2388,
+      "replica": 2383,
+      "parity": 99.8,
+      "originalFiles": 16,
+      "replicaFiles": 16
+    },
+    {
+      "folder": "patches",
+      "original": 63,
+      "replica": 63,
+      "parity": 100,
+      "originalFiles": 1,
+      "replicaFiles": 1
+    },
+    {
+      "folder": "python",
+      "original": 3269,
+      "replica": 3269,
+      "parity": 100,
+      "originalFiles": 32,
+      "replicaFiles": 32
+    },
+    {
+      "folder": "scripts",
+      "original": 39517,
+      "replica": 46755,
+      "parity": 118.3,
+      "originalFiles": 154,
+      "replicaFiles": 191
+    },
+    {
+      "folder": "vendor",
+      "original": 8045,
+      "replica": 10064,
+      "parity": 125.1,
+      "originalFiles": 64,
+      "replicaFiles": 73
+    },
+    {
+      "folder": "website",
+      "original": 910,
+      "replica": 910,
+      "parity": 100,
+      "originalFiles": 5,
+      "replicaFiles": 5
+    }
+  ],
+  "gaps": []
+}

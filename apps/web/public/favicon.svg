@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50" fill="none">
+	<style>
+		@media (prefers-color-scheme: dark) {
+			.rhea-bg { fill: #4F46E5; }
+			.rhea-text { fill: #fff; }
+		}
+		@media (prefers-color-scheme: light) {
+			.rhea-bg { fill: #4F46E5; }
+			.rhea-text { fill: #fff; }
+		}
+	</style>
+	<rect class="rhea-bg" width="50" height="50" rx="10"/>
+	<text class="rhea-text" x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="700">R</text>
+</svg>

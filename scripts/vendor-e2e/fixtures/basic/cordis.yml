@@ -1,0 +1,7 @@
+# Minimal cordis.yml boot fixture — phase 1.10 e2e
+# Format: EntryTree YAML list (sama seperti examples/web-cordis/cordis.yml).
+# Satu entry plugin timer; boot lewat loader + include (alur vendor/cordis/bin.js).
+- id: timer-demo
+  name: '@deepseek-ai/cordis-plugin-timer'
+  config:
+    interval: 1000

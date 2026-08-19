@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-08-19
+
+### Added — Phase 1.1: Rhea Bisa Dibuka
+
+- Deployed the full application monorepo from `learn-harness/` into
+  `rhea-harness/` so the `dsh` CLI binary is bootable end-to-end.
+- Copied 237 workspace projects: `packages/*/*`, `apps/cli` (the `dsh` binary),
+  `apps/web` (pre-built `dist/`), `native/landlock-run`, `website`, `examples`.
+- Copied root config: `package.json`, `pnpm-lock.yaml`, `tsconfig*.json`,
+  `tsdown.config.ts`, `scripts/` (postinstall hooks).
+- Ran `pnpm install --frozen-lockfile` — all 237 workspace projects linked,
+  `node_modules/` resolved, postinstall hooks passed.
+
+### SAD findings
+
+- The journey summary listed 8 packages for Phase 1.1, but 3 had stale paths
+  (`dsh-host`, `dsh-host-host`, `dsh-host-invariants` — do not exist). Real
+  host-layer packages are `dsh-host-webserver`, `dsh-host-apiproxy`,
+  `dsh-host-frontend-static`, `dsh-host-plugin-inventory`.
+- The CLI (`@deepseek-ai/dsh`) declares 58 workspace:* dependencies — the full
+  monorepo closure is required for boot, not just the 8 named packages.
+
+### Verified
+
+- `dsh --version` → `0.1.0-rc.5` (exit 0, no fatal) — AC 1 PASS
+- `dsh web` → booted `http://127.0.0.1:52935` (web server up, no crash) — AC 2 PASS
+- `<title>RHEA — Your Reliable QC Assistant</title>` — AC 3 PASS
+- SIGTERM → clean exit 0 — AC 4 PASS
+- Startup log: no FATAL — AC 5 PASS
+- Compliance: 231 MIT + 4 BSD-3-Clause (landlock native) + 12 non-shipping
+  examples/fixtures (no license field, acceptable). Zero "DeepSeek" in
+  user-facing dist HTML.
+
+### Next
+
+- Phase 1.2 (v0.1.2) — UI Web Merespon (prerequisite 1.1 now satisfied).
+
 ## [0.1.0] - 2026-08-19
 
 ### Added — Phase 0.1: Fondasi Vendor & Cordis
