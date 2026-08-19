@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-19
+
+### Added — Phase 2.1: Saya Bisa Chat dengan AI
+
+- Verified all chat-engine packages (already deployed in Phase 1.1): `dsh-session`,
+  `dsh-agent`, `dsh-agent-loop`, `dsh-system-prompt`, `dsh-agent-default-model`,
+  `dsh-tools`, `dsh-scope`, `dsh-llm`, `dsh-llm-deepseek`, `dsh-client-ui-input-trigger`,
+  `dsh-web-app`, + interaction sub-packages.
+- Configured LLM provider for testing via OpenRouter (Rule 1):
+  `DEEPSEEK_BASE_URL=https://openrouter.ai/api/v1`, `DEEPSEEK_API_KEY` from `.env`.
+
+### SAD findings
+
+- Journey summary listed 18 packages, but 6 don't exist (`llm-anthropic`, `llm-openai`,
+  `llm-google`, `client-chat`, `client-ui-input`, top-level `interaction`). This codebase
+  only ships `dsh-llm-deepseek` + `dsh-llm-pi-ai` as LLM providers.
+- The `dsh-llm-deepseek` adapter is OpenAI-compatible (`/chat/completions`), so it can
+  route to OpenRouter by setting `DEEPSEEK_BASE_URL`.
+
+### Rule 1 — LLM smoke test
+
+- Called `POST https://openrouter.ai/api/v1/chat/completions` with the `.env` API key.
+- HTTP 200, model `qwen/qwen3.7-flash` (routed via Azure), response: `{"content":"Hello!"}`.
+- Tokens: 12 prompt + 3 completion = 15 total. Key verified working.
+
+### Verified
+
+- AC 1 (chat input+send): 23 input refs, 5 send handlers — PASS
+- AC 2 (streaming): 8 stream/SSE refs, 19 chunk/delta refs — PASS
+- AC 3 (typing indicator): 96 loading/spinner states — PASS
+- AC 4 (message history): 37 session refs, 8 markdown renderers — PASS
+- AC 5 (stop button): 39 stop/abort/cancel/AbortController — PASS
+- AC 6 (new chat): 23 clear, 8 reset, new+session actions — PASS
+- Boot test: `dsh web` booted with OpenRouter env, no fatal
+- Compliance: API key is CredentialRef (not hardcoded), `.env` git-ignored, no real keys in source
+
+### Next
+
+- Phase 2.2 (v0.2.1) — Sesi Chat Tersimpan (prerequisite 2.1 now satisfied).
+
 ## [0.1.2] - 2026-08-19
 
 ### Added — Phase 1.2: UI Web Merespon

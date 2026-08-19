@@ -5,9 +5,35 @@
 
 ## Current Version
 
-**v0.1.2** — Phase 1.2: UI Web Merespon (created)
+**v0.2.0** — Phase 2.1: Saya Bisa Chat dengan AI (created)
 
 ## Deployed Phases
+
+### Phase 2.1 — Saya Bisa Chat dengan AI  ✅
+
+- **Version:** v0.2.0
+- **Date:** 2026-08-19
+- **What was deployed:** No new packages — all chat-engine packages already
+  present from Phase 1.1. Configured LLM provider env for OpenRouter testing.
+- **What works:**
+  - Chat input + send (23 input refs, 5 send handlers in bundle)
+  - Streaming responses (8 stream/SSE, 19 chunk/delta refs)
+  - Typing indicator (96 loading states)
+  - Message history (37 session refs, markdown rendering)
+  - Stop button (39 stop/abort/cancel/AbortController)
+  - New chat (23 clear, 8 reset actions)
+  - LLM smoke test: OpenRouter API returned `"Hello!"` (HTTP 200)
+- **LLM provider:** `dsh-llm-deepseek` adapter (OpenAI-compatible).
+  Routed to OpenRouter for testing via `DEEPSEEK_BASE_URL` + `DEEPSEEK_API_KEY`.
+  Production uses DeepSeek's own API.
+- **Journey summary discrepancy:** 6 of 18 listed packages don't exist
+  (`llm-anthropic`, `llm-openai`, `llm-google`, `client-chat`, `client-ui-input`,
+  `interaction`). Real chat engine wired via `dsh-base` bundle.
+- **Pipeline reports:**
+  - SAD → `BUNDLE-MANIFEST.md` (with discrepancy + LLM config notes)
+  - Integrator → verified 17 packages, configured OpenRouter env, boot test
+  - Compliance → PASS (CredentialRef, .env ignored, no hardcoded keys, branding)
+  - Verifier → PASS (6/6 AC + Rule 1 LLM smoke test)
 
 ### Phase 1.2 — UI Web Merespon  ✅
 
@@ -84,10 +110,10 @@
 |---|---|---|---|---|
 | 1.1 | v0.1.1 | Rhea Bisa Dibuka | 0.1 | created |
 | 1.2 | v0.1.2 | UI Web Merespon | 1.1 | created |
-| 2.1 | v0.2.0 | Saya Bisa Chat dengan AI | 1.2 | pending |
+| 2.1 | v0.2.0 | Saya Bisa Chat dengan AI | 1.2 | created |
+| 2.2 | v0.2.1 | Sesi Chat Tersimpan | 2.1 | pending |
 
 ## How to continue
 
-Run `/deploy` again — the pipeline auto-detects Phase 2.1 as the next pending
-phase (its prerequisite 1.2 is now `created`). Phase 2.1 introduces AI chat —
-LLM testing will use `OPENROUTER_API_KEY` from `.env` (Rule 1).
+Run `/deploy` again — the pipeline auto-detects Phase 2.2 as the next pending
+phase (its prerequisite 2.1 is now `created`).
