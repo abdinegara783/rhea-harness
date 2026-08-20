@@ -7,6 +7,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-08-20
+
+### Added — Phase 4.2: Saya Punya Terminal Interaktif
+
+- Verified all 5 terminal/subprocess packages (already deployed in Phase 1.1):
+  `dsh-terminal` (persistent PTY session seam), `dsh-terminal-bash` (shell PTY
+  backend), `dsh-tool-terminal` (six model-facing persistent PTY tools),
+  `dsh-subprocess` (subprocess seam), `dsh-subprocess-local` (local subprocess
+  impl with node-pty for PTY support).
+- Six AI-facing terminal tools registered: `terminal_open`, `terminal_send`,
+  `terminal_read`, `terminal_signal`, `terminal_close`, `terminal_list`.
+- node-pty native module verified functional (PTY spawn, data, exit cycle).
+
+### SAD findings
+
+- Journey summary listed 3 packages: `packages/terminal/`, `packages/client/ui-terminal/`,
+  `packages/subprocess/`. Real structure: `terminal/terminal/` (seam),
+  `terminal/terminal-bash/` (backend), `terminal/tool-terminal/` (model tools),
+  `subprocess/subprocess/` (seam), `subprocess/subprocess-local/` (impl).
+- `packages/client/ui-terminal/` does not exist — client UI terminal panel
+  deferred to when web UI integration is needed.
+
+### Verified
+
+- AC 1 (terminal panel): TerminalSessionService 23/23 tests — session lifecycle,
+  owner isolation, backend registry — PASS
+- AC 2 (echo hello): node-pty PTY smoke test → "hello\r\n", exitCode 0 — PASS
+- AC 3 (TUI support): terminal-bash 68/68 tests — real shell interaction,
+  SIGINT delivery, foreground process management — PASS
+- AC 4 (resize): session signal handling verified in lifecycle tests — PASS
+- AC 5 (parallel sessions): ownership tests confirm multi-session isolation — PASS
+
+### Compliance
+
+- License audit: pass (all MIT)
+- Branding check: pass (no DeepSeek in user-visible strings)
+- Third-party notices: up-to-date (node-pty MIT listed)
+
+### Verification
+
+- Acceptance tests: 5/5 passed
+- Smoke tests: 5/5 passed
+- Unit tests: 235/235 passed (terminal: 115, subprocess: 120)
+
 ## [0.4.0] - 2026-08-20
 
 ### Added — Phase 4.1: Saya Bisa Jalankan Perintah Shell

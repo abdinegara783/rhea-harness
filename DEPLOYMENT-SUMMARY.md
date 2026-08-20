@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.4.0** — Phase 4.1: Saya Bisa Jalankan Perintah Shell (created)
+**v0.4.1** — Phase 4.2: Saya Punya Terminal Interaktif (created)
 
 ## API Service Catalog
 
@@ -63,8 +63,50 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 4.1 | Approval policy | Policy | `ctx.approval` for shell commands | Permission seam for shell execution (ask policy, fail-closed) |
 | 4.1 | Timeout guard | Policy | Per-tool deadline enforcement | dsh-tool-call-timeout-policy: arms deadline on exec.signal |
 | 4.1 | Repeat guard | Policy | Advisory reminder on repeated calls | dsh-repeat-tool-reminder: warns when agent loops on identical tool calls |
+| 4.2 | terminal_open | Agent tool | `terminal_open(type, name?, cwd?)` | Create persistent owner-isolated PTY session |
+| 4.2 | terminal_send | Agent tool | `terminal_send(id, text, wait?)` | Send text to persistent terminal, wait for output |
+| 4.2 | terminal_read | Agent tool | `terminal_read(id, bytes?)` | Read bounded output page from terminal |
+| 4.2 | terminal_signal | Agent tool | `terminal_signal(id, signal)` | Send signal to foreground process group |
+| 4.2 | terminal_close | Agent tool | `terminal_close(id)` | Close terminal and await process tree cleanup |
+| 4.2 | terminal_list | Agent tool | `terminal_list()` | List owned persistent terminal sessions |
 
 ## Deployed Phases
+
+### Phase 4.2 — Saya Punya Terminal Interaktif  ✅
+
+- **Version:** v0.4.1
+- **Date:** 2026-08-20
+- **What was deployed:** No new packages — all 5 terminal/subprocess packages
+  already present from Phase 1.1 monorepo deployment. Verified the interactive
+  terminal pipeline works end-to-end via unit tests and node-pty smoke test.
+- **What works:**
+  - AI opens persistent terminal sessions via `terminal_open` tool (PTY seam)
+  - AI sends commands and reads output via `terminal_send` / `terminal_read`
+  - AI signals foreground processes via `terminal_signal` (SIGINT, SIGTERM)
+  - AI closes terminals and lists owned sessions (`terminal_close`, `terminal_list`)
+  - node-pty native module functional (PTY spawn → data → exit cycle verified)
+  - TerminalSessionService: owner-scoped isolation, backend registry, lifecycle
+  - BashTerminalBackend: real shell PTY with cwd persistence, env scrubbing
+  - 6 model-facing tools registered with owner isolation and background-job integration
+- **Proof:** Ran `npx vitest` on terminal packages (23/23 session + 68/68 bash +
+  24/24 tool tests pass), subprocess packages (3/3 core + 117/117 local pass).
+  node-pty smoke: `echo hello` → "hello\r\n", exitCode 0. Headless app boots
+  without import errors.
+- **Journey summary discrepancy:** All 3 listed packages had generic paths.
+  Real: `terminal/terminal/` (seam), `terminal/terminal-bash/` (backend),
+  `terminal/tool-terminal/` (model tools), `subprocess/subprocess/` (seam),
+  `subprocess/subprocess-local/` (impl). `packages/client/ui-terminal/` does
+  not exist.
+- **API Services produced:**
+  - Agent tools: `terminal_open`, `terminal_send`, `terminal_read`,
+    `terminal_signal`, `terminal_close`, `terminal_list` (persistent PTY
+    sessions with owner isolation)
+  - Runtime dep: `node-pty` 1.1.0 (MIT, Microsoft Corp)
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (5 packages, all exist, deps satisfied)
+  - Integrator → build success, 235/235 Phase 4.2 tests passed, typecheck pass
+  - Compliance → PASS (all MIT, node-pty MIT, THIRD_PARTY_NOTICES current)
+  - Verifier → PASS (10/10 tests: 5 AC + 5 smoke)
 
 ### Phase 4.1 — Saya Bisa Jalankan Perintah Shell  ✅
 
@@ -345,11 +387,11 @@ Updated by the Dokumenter after each phase (Rule 3).
 
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
-| 4.1 | v0.4.1 | Saya Punya Terminal Interaktif | 4.1 | next |
-| 8.1 | v0.8.0 | AI Bisa Jalankan Kode dengan Aman | 4.1 | next |
+| 5.1 | v0.5.0 | Sesi Chat Bisa Dipangkas Otomatis | 2.2 | next |
+| 8.1 | v0.8.0 | AI Bisa Jalankan Kode dengan Aman | 4.2 | next |
 | 9.1 | v0.9.0 | AI Punya Asisten Bahasa (LSP) | 3.2 | pending |
 
 ## How to continue
 
 Run `/deploy` again — the pipeline auto-detects the next pending phase.
-Phases 4.2 (Terminal Interaktif) and 8.1 (Code Execution) are now unblocked.
+Phases 5.1 (Compaction), 5.2 (Todo Agent), 6.1 (Model Picker), 7.1 (Web Browse), 8.1 (Code Execution), 10.1 (Cordis Plugins), 10.2 (MCP Server), and 11.1 (Skills) are now unblocked.
