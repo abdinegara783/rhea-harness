@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.4.1** — Phase 4.2: Saya Punya Terminal Interaktif (created)
+**v0.5.0** — Phase 5.1: Sesi Chat Bisa Dipangkas Otomatis (created)
 
 ## API Service Catalog
 
@@ -71,6 +71,45 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 4.2 | terminal_list | Agent tool | `terminal_list()` | List owned persistent terminal sessions |
 
 ## Deployed Phases
+
+### Phase 5.1 — Sesi Chat Bisa Dipangkas Otomatis  ✅
+
+- **Version:** v0.5.0
+- **Date:** 2026-08-20
+- **What was deployed:** No new packages — all 4 compaction packages already
+  present from Phase 1.1 monorepo deployment. Verified the auto-compaction
+  pipeline works end-to-end via 248 unit tests and module import smoke tests.
+- **What works:**
+  - Auto-compaction triggers when token-meter context pressure exceeds threshold
+  - LLM summarization replaces old messages with one summary node
+  - Tool-result pruner runs before summarization (head/tail/4096/1024 config)
+  - Manual `/compact` command for explicit user-triggered compaction
+  - Compaction checkpoint provenance (compactCheckpointSource) for tracking
+  - Tool-pairing balance ensures safe cuts (no orphan tool-call/result)
+  - UI compaction node renders summary indicator in conversation
+  - Concurrent compaction exclusion (busy state, durability lock)
+  - Failure classification (ManualCompactionError with code)
+  - `auto: false` mode disables automatic compaction
+- **Proof:** Ran `npx vitest` on compaction packages (47/47 seam + 122/122
+  basic + 25/25 command + 54/54 pruner = 248/248 pass). Token-meter 54/54
+  pass. All 4 packages import cleanly in rhea-harness. Compaction wired in
+  3 agent presets (standard, code, cordis).
+- **Journey summary discrepancy:** All 4 listed packages had generic paths.
+  Real: `compaction/compaction/` (seam), `compaction/compaction-basic/` (LLM
+  backend), `compaction/command-compact/` (slash command),
+  `compaction/compaction-tool-result-pruner/` (pruner). `packages/context/`
+  doesn't exist as single package. `packages/client/compaction-ui/` doesn't
+  exist — UI is in `client/ui-conversation/compaction.ts`.
+  `packages/runtime-diagnostics/` doesn't exist — token-meter provides this.
+- **API Services produced:** No new API services (internal agent pipeline).
+  Compaction is triggered by token-meter pressure (auto) or `/compact` command
+  (manual). The `ctx.compaction.compactNow()` is an internal service call,
+  not a network endpoint.
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (4 packages + 1 dependency, all exist, deps satisfied)
+  - Integrator → build success, 248/248 Phase 5.1 tests passed, typecheck pass
+  - Compliance → PASS (all MIT, no new vendor packages)
+  - Verifier → PASS (10/10 tests: 5 AC + 5 smoke)
 
 ### Phase 4.2 — Saya Punya Terminal Interaktif  ✅
 
@@ -387,11 +426,11 @@ Updated by the Dokumenter after each phase (Rule 3).
 
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
-| 5.1 | v0.5.0 | Sesi Chat Bisa Dipangkas Otomatis | 2.2 | next |
+| 5.2 | v0.5.1 | Daftar Tugas & Todo Agent | 2.1 | next |
 | 8.1 | v0.8.0 | AI Bisa Jalankan Kode dengan Aman | 4.2 | next |
 | 9.1 | v0.9.0 | AI Punya Asisten Bahasa (LSP) | 3.2 | pending |
 
 ## How to continue
 
 Run `/deploy` again — the pipeline auto-detects the next pending phase.
-Phases 5.1 (Compaction), 5.2 (Todo Agent), 6.1 (Model Picker), 7.1 (Web Browse), 8.1 (Code Execution), 10.1 (Cordis Plugins), 10.2 (MCP Server), and 11.1 (Skills) are now unblocked.
+Phases 5.2 (Todo Agent), 5.3 (Sub-Agent), 6.1 (Model Picker), 7.1 (Web Browse), 8.1 (Code Execution), 10.1 (Cordis Plugins), 10.2 (MCP Server), and 11.1 (Skills) are now unblocked.

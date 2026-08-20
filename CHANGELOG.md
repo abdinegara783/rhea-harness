@@ -7,6 +7,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-08-20
+
+### Added — Phase 5.1: Sesi Chat Bisa Dipangkas Otomatis
+
+- Verified all 4 compaction packages (already deployed in Phase 1.1):
+  `dsh-compaction` (abstract compaction service seam, `ctx.compaction`),
+  `dsh-compaction-basic` (LLM summarization backend with auto/manual modes),
+  `dsh-compaction-tool-result-pruner` (model-free head/tail pruning for tool
+  results), `dsh-command-compact` (human-facing `/compact` slash command).
+- Supporting dependency verified: `dsh-token-meter` (context pressure
+  measurement), `dsh-client-ui-conversation` (compaction UI node).
+- Compaction registered in agent presets (standard, code, cordis) with
+  tool-result-pruner config (thresholdChars: 8192, headChars: 4096,
+  tailChars: 1024).
+
+### SAD findings
+
+- Journey summary listed 4 packages with generic paths. Real structure:
+  `packages/compaction/compaction/` (seam), `packages/compaction/compaction-basic/`
+  (LLM backend), `packages/compaction/command-compact/` (slash command),
+  `packages/compaction/compaction-tool-result-pruner/` (pruner).
+- `packages/context/` does not exist as a single package — real: 4 sub-packages
+  (`tmux-context`, `time-context`, `agent-instructions`, `session-reference`).
+- `packages/client/compaction-ui/` does not exist — compaction UI is a node in
+  `packages/client/ui-conversation/` (compaction.ts, 66 lines).
+- `packages/runtime-diagnostics/` does not exist — token-meter at
+  `packages/llm/token-meter/` provides context pressure measurement.
+
+### Verified
+
+- AC 1 (auto-compaction): Auto-listener test 'compacts before a step above
+  threshold' PASS — token-meter triggers summarization when context pressure
+  exceeds threshold — PASS
+- AC 2 (compaction indicator): UI compaction node (66 lines) renders
+  compaction/summary events with checkpoint provenance — PASS
+- AC 3 (context preserved): 122 compaction-basic tests verify summarization
+  preserves context via LLM summary + checkpoint provenance — PASS
+- AC 4 (manual mode): Test 'auto:false installs neither automatic listener'
+  PASS — manual mode disables auto-compaction — PASS
+- AC 5 (Compact Now): 17 compactNow tests PASS — transaction safety,
+  concurrent exclusion, failure classification, cancellation — PASS
+- Smoke: `dsh --version` → 0.1.0-rc.5, no fatal — PASS
+- Smoke: All 4 compaction packages import cleanly — PASS
+- Smoke: 248/248 unit tests pass (12 test files) — PASS
+- Smoke: Token-meter 54/54 tests pass — PASS
+- Smoke: Compaction wired in 3 agent presets — PASS
+- Compliance: All MIT, no new vendor packages, THIRD_PARTY_NOTICES current
+
+### Verification
+
+- Acceptance tests: 5/5 passed
+- Smoke tests: 5/5 passed
+- Unit tests: 248/248 passed (compaction: 47, compaction-basic: 122,
+  command-compact: 25, tool-result-pruner: 54)
+
+### Next
+
+- Phase 5.2 (v0.5.1) — Daftar Tugas & Todo Agent (prereq 2.1 satisfied).
+- Phase 5.3 (v0.5.2) — Saya Bisa Bikin Sub-Agent (prereq 2.1 satisfied).
+
 ## [0.4.1] - 2026-08-20
 
 ### Added — Phase 4.2: Saya Punya Terminal Interaktif
