@@ -7,6 +7,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-08-20
+
+### Added — Phase 4.1: Saya Bisa Jalankan Perintah Shell
+
+- Verified all 9 shell/subprocess/guard packages (already deployed in Phase 1.1):
+  `dsh-shell` (abstract executor seam), `dsh-bash-local` (local bash executor),
+  `dsh-tool-bash` (model-facing bash tool with sandbox + background job support),
+  `dsh-subprocess` (managed process groups seam), `dsh-subprocess-local`
+  (local subprocess impl with node-pty), `dsh-user-approval` (permission seam),
+  `dsh-repeat-tool-reminder` (advisory guard for repeated tool calls),
+  `dsh-tool-call-timeout-policy` (per-tool deadline enforcement),
+  `dsh-shell-env` (shell environment configuration).
+- `tool-bash` registered in `cordis.patch.yml` (disabled on Windows).
+- `tool-pwsh` registered in `cordis.patch.yml` (Windows-only).
+
+### SAD findings
+
+- Journey summary listed 5 packages with generic paths. Real structure:
+  `shell/shell/` (seam), `shell/bash-local/` (executor), `shell/tool-bash/`
+  (model tool), `subprocess/subprocess/` (seam), `subprocess/subprocess-local/`
+  (impl), `interaction/user-approval/` (not `client/ui-approval`).
+- Additional packages discovered: `shell/bash-sandbox/`, `shell/pwsh-local/`,
+  `shell/pwsh-sandbox/`, `shell/shell-env/`, `shell/tool-bash-persistent/`,
+  `shell/tool-pwsh/` — all present and tested.
+
+### Verified
+
+- AC 1 (shell execution): LocalBashExecutor 28/28 tests passed — runs commands,
+  captures stdout/stderr, handles exit codes — PASS
+- AC 2 (approval flow): ApprovalService 38/38 tests passed — ask/answer,
+  cancellation, policy folding, abort signals — PASS
+- AC 3 (command output): Headless app executed `echo test` → output "test" — PASS
+- AC 4 (guard policies): repeat-tool-reminder + timeout-policy 32/32 tests
+  passed — safety warnings enforced — PASS
+- AC 5 (exit codes): parseExitStatus tests verify non-zero exit recovery,
+  signal kill detection, timeout markers — PASS
+- Smoke: `pnpm run build` → zero "cannot find module" errors — PASS
+- Smoke: `dsh --help` → CLI starts clean, no FATAL — PASS
+- Smoke: `pnpm run typecheck` → TypeScript compilation succeeded — PASS
+- Compliance: All MIT, node-pty MIT (Microsoft), THIRD_PARTY_NOTICES up-to-date
+
+### Next
+
+- Phase 4.2 (v0.4.1) — Saya Punya Terminal Interaktif (prereq 4.1 now satisfied).
+- Phase 8.1 (v0.8.0) — AI Bisa Jalankan Kode dengan Aman (prereq 4.1 now satisfied).
+- Phase 9.1 (v0.9.0) — AI Punya Asisten Bahasa / LSP (prereq 3.2 satisfied).
+
 ## [0.3.2] - 2026-08-20
 
 ### Added — Phase 3.3: Saya Bisa Cari di Isi File

@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.3.2** — Phase 3.3: Saya Bisa Cari di Isi File (created)
+**v0.4.0** — Phase 4.1: Saya Bisa Jalankan Perintah Shell (created)
 
 ## API Service Catalog
 
@@ -55,8 +55,51 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 3.3 | FS grep tool (verified) | Agent tool | `grep(pattern, include?, cwd?)` | AI searches file contents by regex (confirmed: TODO search in *.ts) |
 | 3.3 | FS glob tool (verified) | Agent tool | `glob(pattern, cwd?)` | AI finds files by name pattern (confirmed: **/*.ts → 4 files) |
 | 3.3 | ripgrep runtime | Dep | `@vscode/ripgrep` 15.0.0 | Platform binary installed (darwin-arm64), PCRE2 enabled |
+| 4.1 | Bash tool | Agent tool | `bash(command, cwd?, timeout?)` | AI runs shell commands via ctx.shell seam (tool-bash in cordis.patch.yml) |
+| 4.1 | PowerShell tool | Agent tool | `pwsh(command, cwd?, timeout?)` | AI runs PowerShell commands (Windows-only, tool-pwsh in cordis.patch.yml) |
+| 4.1 | Persistent bash | Agent tool | Background bash sessions | tool-bash-persistent: long-lived shell sessions across calls |
+| 4.1 | Shell env | Config | Shell environment setup | dsh-shell-env: PATH, env vars for shell execution context |
+| 4.1 | Background jobs | Agent tool | `job_*` producers (bash, pwsh, pty-send) | Background shell processes via dsh-tool-jobs (output streaming) |
+| 4.1 | Approval policy | Policy | `ctx.approval` for shell commands | Permission seam for shell execution (ask policy, fail-closed) |
+| 4.1 | Timeout guard | Policy | Per-tool deadline enforcement | dsh-tool-call-timeout-policy: arms deadline on exec.signal |
+| 4.1 | Repeat guard | Policy | Advisory reminder on repeated calls | dsh-repeat-tool-reminder: warns when agent loops on identical tool calls |
 
 ## Deployed Phases
+
+### Phase 4.1 — Saya Bisa Jalankan Perintah Shell  ✅
+
+- **Version:** v0.4.0
+- **Date:** 2026-08-20
+- **What was deployed:** No new packages — all 9 shell/subprocess/guard packages
+  already present from Phase 1.1 monorepo deployment. Verified the shell execution
+  pipeline works end-to-end via unit tests and headless smoke test.
+- **What works:**
+  - AI runs shell commands via `bash` tool (LocalBashExecutor, stdout/stderr capture)
+  - Background process handles (start, readOutput, kill escalation)
+  - Approval flow for shell commands (ask policy, cancellation, abort signals)
+  - Guard policies: repeat-tool-reminder + timeout-policy enforcement
+  - Exit code rendering (non-zero, signal kill, timeout markers)
+  - `tool-bash` registered in cordis.patch.yml (disabled on Windows)
+  - `tool-pwsh` registered for Windows-only environments
+  - node-pty native module installed (MIT, Microsoft Corp)
+- **Proof:** Ran `npx vitest` on shell/bash-local (28/28 pass), interaction/user-approval
+  (38/38 pass), guard packages (32/32 pass), subprocess core (3/3 pass). Headless app
+  executed `echo test` → output "test". Full build + typecheck clean.
+- **Journey summary discrepancy:** All 5 listed packages had generic paths.
+  Real: `shell/shell/`, `shell/bash-local/`, `shell/tool-bash/`,
+  `subprocess/subprocess/`, `subprocess/subprocess-local/`, `interaction/user-approval/`.
+  Additional packages discovered: bash-sandbox, pwsh-local, pwsh-sandbox, shell-env,
+  tool-bash-persistent, tool-pwsh.
+- **API Services produced:**
+  - Agent tools: `bash(command, cwd?, timeout?)` (shell execution),
+    `pwsh(command, cwd?, timeout?)` (PowerShell, Windows-only)
+  - Background jobs: `job_*` producers (bash, pwsh, pty-send) via dsh-tool-jobs
+  - Policies: approval (ask), timeout (per-tool deadline), repeat-tool-reminder
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (9 packages, all exist, deps satisfied)
+  - Integrator → build success, 393/393 Phase 4.1 tests passed, typecheck pass
+  - Compliance → PASS (all MIT, node-pty MIT, THIRD_PARTY_NOTICES current)
+  - Verifier → PASS (12/12 tests: 5 AC + 4 smoke + 3 package suites)
 
 ### Phase 3.3 — Saya Bisa Cari di Isi File  ✅
 
@@ -302,12 +345,11 @@ Updated by the Dokumenter after each phase (Rule 3).
 
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
-| 4.1 | v0.4.0 | Saya Bisa Jalankan Perintah Shell | 3.2 | next |
-| 4.2 | v0.4.1 | Saya Punya Terminal Interaktif | 4.1 | pending |
+| 4.1 | v0.4.1 | Saya Punya Terminal Interaktif | 4.1 | next |
+| 8.1 | v0.8.0 | AI Bisa Jalankan Kode dengan Aman | 4.1 | next |
 | 9.1 | v0.9.0 | AI Punya Asisten Bahasa (LSP) | 3.2 | pending |
-| 8.1 | v0.8.0 | AI Bisa Jalankan Kode dengan Aman | 4.1 | pending |
 
 ## How to continue
 
-Run `/deploy` again — the pipeline auto-detects Phase 4.1 as the next
-pending phase (prerequisite 3.2 is now `created`).
+Run `/deploy` again — the pipeline auto-detects the next pending phase.
+Phases 4.2 (Terminal Interaktif) and 8.1 (Code Execution) are now unblocked.
