@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.9.0** — Phase 9.1: AI Punya Asisten Bahasa (LSP) (created)
+**v1.0.0** — Phase 10.1: AI Bisa Pakai Plugin Dinamis (Cordis) (created)
 
 ## API Service Catalog
 
@@ -112,8 +112,52 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 9.1 | LSP stdio provider | Provider | `LspConnection`, `LspInstance` | Stdio transport: spawns language servers, translates JSON-RPC |
 | 9.1 | LSP tool | Agent tool | `lsp(operation, file, line, character)` | goToDefinition, findReferences, goToImplementation, hover |
 | 9.1 | TypeScript LSP | Config | `npx typescript-language-server --stdio` | Default language server for .ts/.tsx/.js/.jsx |
+| 10.1 | Plugin inventory | RPC | `POST /api/pluginInventory.list` | List loaded Cordis plugins with status (enabled, fiber phase) |
+| 10.1 | Plugins settings | Client seat | Settings > Plugins | Plugin cards with enable/disable toggle, config forms |
 
 ## Deployed Phases
+
+### Phase 10.1 — AI Bisa Pakai Plugin Dinamis (Cordis)  ✅
+
+- **Version:** v1.0.0
+- **Date:** 2026-08-20
+- **What was deployed:** 3 packages verified and built:
+  - `@deepseek-ai/dsh-host-plugin-inventory` (packages/host/plugin-inventory/)
+    — Read-only Remote projection of the current Cordis Loader plugin state.
+    `PluginInventoryGateway` class exposes `pluginInventory.list` RPC — returns
+    entry id, module name, enabled flag, and fiber phase per loaded plugin.
+  - `@deepseek-ai/dsh-client-ui-settings-plugins` (packages/client/ui-settings-plugins/)
+    — Settings > Plugins panel with feature-owned tabs, configurable plugin
+    cards (PluginCard, BashCard, AgentLoopCard, WebSearchCard), form-driven
+    configuration fields, and enable/disable toggle without restart.
+  - `@deepseek-ai/dsh-client-ui-settings-plugin-inventory` (packages/client/ui-settings-plugin-inventory/)
+    — Read-only Cordis Loader inventory tab in Web Plugins settings.
+    Shows all loaded plugins with their runtime status.
+- **What works:**
+  - Plugin inventory gateway lists all loaded Cordis plugins via RPC
+  - Plugins settings section renders with feature-owned tabs and plugin cards
+  - Plugin cards show enable/disable toggle, configuration forms
+  - Plugin inventory tab shows runtime status (enabled, fiber phase)
+  - Enable/disable without restart (cordis HMR-capable)
+  - Form-driven configuration per plugin (card-form, fields)
+- **Proof:** Build success for all 3 packages. Typecheck pass (0 errors).
+  88/88 unit tests passed (10 test files). Full build: no errors, no broken
+  imports. App starts correctly (`dsh --help` works). All build artifacts
+  present (lib/ directories).
+- **Journey summary discrepancy:** `packages/extensions/` and
+  `packages/client/ui-extensions/` do not exist. Real packages:
+  `packages/host/plugin-inventory/`, `packages/client/ui-settings-plugins/`,
+  `packages/client/ui-settings-plugin-inventory/`.
+- **Compliance:** LICENSE pass (all MIT), THIRD_PARTY_NOTICES pass, vendor
+  LICENSE intact (9/9), zero "DeepSeek" in user-visible UI strings.
+- **API Services produced:**
+  - RPC: `POST /api/pluginInventory.list` — list loaded Cordis plugins with status
+  - Client seat: Settings > Plugins — plugin cards with enable/disable toggle
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (3 packages + 2 supporting, Phase 2.1 dep satisfied)
+  - Integrator → build success, 88/88 tests passed, typecheck pass
+  - Compliance → PASS (all MIT, branding clean)
+  - Verifier → PASS (8/8 tests: 5 AC + 3 smoke)
 
 ### Phase 9.1 — AI Punya Asisten Bahasa (LSP)  ✅
 
@@ -1015,12 +1059,13 @@ Updated by the Dokumenter after each phase (Rule 3).
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
 | 9.1 | v0.9.0 | AI Punya Asisten Bahasa (LSP) | 3.2 | created |
-| 10.1 | v1.0.0 | AI Bisa Pakai Plugin Dinamis (Cordis) | 2.1 | pending |
+| 10.1 | v1.0.0 | AI Bisa Pakai Plugin Dinamis (Cordis) | 2.1 | created |
 | 10.2 | v1.0.1 | AI Bisa Pakai MCP Server | 2.1 | pending |
 | 10.3 | v1.0.2 | AI Bisa Pakai E2B Sandbox Cloud | 8.1 | pending |
 | 11.1 | v1.1.0 | AI Bisa Pakai Skill | 2.1 | pending |
+| 11.2 | v1.1.1 | AI Bisa Pakai Preset Persona | 10.1 | pending |
 
 ## How to continue
 
 Run `/deploy` again — the pipeline auto-detects the next pending phase.
-Phases 10.1 (Cordis Plugins), 10.2 (MCP Server), 10.3 (E2B Cloud), 11.1 (Skills), 11.2 (Persona), and 11.3 (Workflow) are now unblocked.
+Phases 10.2 (MCP Server), 10.3 (E2B Cloud), 11.1 (Skills), 11.2 (Persona), 11.3 (Workflow), and 12.1 (SDK & ACP) are now unblocked.

@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-08-20
+
+### Added — Phase 10.1: AI Bisa Pakai Plugin Dinamis (Cordis)
+
+- Plugin inventory gateway (`@deepseek-ai/dsh-host-plugin-inventory`):
+  read-only Remote projection of the current Cordis Loader plugin state.
+  `PluginInventoryGateway` exposes `pluginInventory.list` RPC — returns
+  entry id, module name, enabled flag, and fiber phase per plugin.
+- Plugins settings section (`@deepseek-ai/dsh-client-ui-settings-plugins`):
+  Settings > Plugins panel with feature-owned tabs, configurable plugin
+  cards (PluginCard, BashCard, AgentLoopCard, WebSearchCard), form-driven
+  configuration, and enable/disable toggle without restart.
+- Plugin inventory tab (`@deepseek-ai/dsh-client-ui-settings-plugin-inventory`):
+  Read-only Cordis Loader inventory tab in Web Plugins settings.
+  Shows all loaded plugins with their runtime status.
+
+#### Compliance
+- License audit: pass
+- Branding check: pass
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed
+- Smoke tests: 3/3 passed
+- Unit tests: 88/88 passed (10 test files)
+
 ## [0.9.0] - 2026-08-20
 
 ### Added — Phase 9.1: AI Punya Asisten Bahasa (LSP)
