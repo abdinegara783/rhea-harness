@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-08-20
+
+### Added — Phase 12.1: RHEA Bisa Diakses via SDK & ACP
+
+- SDK client (`@deepseek-ai/dsh-sdk-client`): TypeScript client SDK
+  (`HarnessClient`) for driving a RHEA runtime subprocess over stdio
+  JSON-RPC. High-level API: `initialize()`, `request()`, `close()`,
+  subscription management. Error taxonomy: `TransportClosedError`,
+  `RequestTimeoutError`, `SdkProtocolError`, `JsonRpcResponseError`.
+- SDK protocol (`@deepseek-ai/dsh-sdk-protocol`): shared wire protocol —
+  `JsonRpcLineTransport` (newline-delimited JSON-RPC over stdio), named
+  request/result/notification types for SDK↔runtime communication.
+- SDK JSON-RPC server (`@deepseek-ai/dsh-sdk-jsonrpc-server`): stdio
+  JSON-RPC server plugin (`HarnessSdkJsonRpcServer`) for out-of-process
+  SDK clients. Cordis plugin with `apply`/`inject`.
+- ACP server (`@deepseek-ai/dsh-acp`): Agent Client Protocol server
+  backed by `@agentclientprotocol/sdk` 0.25.1 (Apache-2.0). Drives RHEA
+  agents over JSON-RPC stdio — open standard for agent interop.
+- API gateway (`@deepseek-ai/dsh-api-gateway`): Typert Remote Host
+  dispatcher and Client API endpoint. `TypertGatewayService` for
+  client-side remote dispatch over the connection seam.
+- API remotes (`@deepseek-ai/dsh-api-remotes`): Remote BFF assembly —
+  agent/session lookup policy, event forwarding, subagent session
+  ownership resolution. `createApiRemoteAgentResolver()`,
+  `inspectApiRemoteSession()`.
+- Session store (`@deepseek-ai/dsh-session`): already deployed in Phase
+  2.1, verified as SDK/ACP session backbone.
+
+#### Compliance
+- License audit: pass (all MIT, `@agentclientprotocol/sdk` Apache-2.0 listed)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings from this phase)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed (SDK import, session management, ACP endpoint, REST API, examples)
+- Smoke tests: 4/4 passed (no FATAL, CLI help, no broken imports, .env gitignored)
+- Unit tests: 205/232 passed (16 test files; 27 pre-existing Node.js env failures)
+
 ## [1.1.2] - 2026-08-20
 
 ### Added — Phase 11.3: AI Mendukung Workflow & Penjadwalan

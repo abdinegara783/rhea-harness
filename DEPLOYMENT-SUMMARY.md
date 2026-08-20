@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v1.1.2** — Phase 11.3: AI Mendukung Workflow & Penjadwalan (created)
+**v1.2.0** — Phase 12.1: RHEA Bisa Diakses via SDK & ACP (created)
 
 ## API Service Catalog
 
@@ -147,8 +147,77 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 11.3 | job_kill | Agent tool | `job_kill` | Kill a background job |
 | 11.3 | session/jobs | SSE event | `session/jobs` | Background job visibility in session event stream |
 | 11.3 | Workflow run UI | Client component | `WorkflowRunPanel` | Browser-surface workflow run display + nested members |
+| 12.1 | SDK Client | SDK (TypeScript) | `import { HarnessClient } from '@deepseek-ai/dsh-sdk-client'` | High-level SDK for driving RHEA over stdio JSON-RPC |
+| 12.1 | SDK Protocol | SDK (transport) | `JsonRpcLineTransport` | Newline-delimited JSON-RPC stdio transport |
+| 12.1 | SDK Server | Cordis plugin | `HarnessSdkJsonRpcServer` | Stdio JSON-RPC server plugin for out-of-process SDK clients |
+| 12.1 | ACP server | Cordis plugin / stdio JSON-RPC | `@deepseek-ai/dsh-acp` | Agent Client Protocol server for driving RHEA agents over JSON-RPC stdio |
+| 12.1 | ACP SDK dep | External dep | `@agentclientprotocol/sdk` 0.25.1 | Open ACP standard SDK (Apache-2.0) |
+| 12.1 | API Gateway | Typert Remote | `TypertGatewayService` | Client API endpoint and Typert Remote Host dispatcher |
+| 12.1 | API Remotes | BFF assembly | `createApiRemoteAgentResolver`, `inspectApiRemoteSession` | Remote BFF: agent/session lookup, event forwarding |
 
 ## Deployed Phases
+
+### Phase 12.1 — RHEA Bisa Diakses via SDK & ACP  ✅
+
+- **Version:** v1.2.0
+- **Date:** 2026-08-20
+- **What was deployed:** 7 packages verified and built:
+  - `@deepseek-ai/dsh-sdk-client` (packages/sdk/client/)
+    — TypeScript client SDK (`HarnessClient`) for driving a RHEA runtime
+    subprocess over stdio JSON-RPC. High-level API: `initialize()`,
+    `request()`, `close()`, subscription management.
+  - `@deepseek-ai/dsh-sdk-protocol` (packages/sdk/protocol/)
+    — Shared wire protocol: `JsonRpcLineTransport` (newline-delimited
+    JSON-RPC stdio), named request/result/notification types.
+  - `@deepseek-ai/dsh-sdk-jsonrpc-server` (packages/sdk/server/)
+    — Stdio JSON-RPC server plugin (`HarnessSdkJsonRpcServer`) for
+    out-of-process SDK clients. Cordis plugin with `apply`/`inject`.
+  - `@deepseek-ai/dsh-acp` (packages/acp/acp/)
+    — Agent Client Protocol server (`@agentclientprotocol/sdk` 0.25.1)
+    for driving RHEA agents over JSON-RPC stdio. Open standard interop.
+  - `@deepseek-ai/dsh-api-gateway` (packages/api/gateway/)
+    — Typert Remote Host dispatcher and Client API endpoint.
+    `TypertGatewayService` for client-side remote dispatch.
+  - `@deepseek-ai/dsh-api-remotes` (packages/api/remotes/)
+    — Remote BFF assembly: agent/session lookup, event forwarding,
+    subagent session ownership resolution.
+  - `@deepseek-ai/dsh-session` (packages/core/session/)
+    — Event-sourced session store. Already deployed in Phase 2.1,
+    verified as SDK/ACP session backbone.
+- **Build status:** success (all 7 packages built, zero errors)
+- **Typecheck:** pass (host + client)
+- **Test results:** 205 passed, 27 failed (pre-existing Node.js v22.17.1
+  `.ts` subprocess extension issue — same in learn-harness source)
+- **API Services produced:**
+  | Service | Type | Endpoint / Method | Notes |
+  |---|---|---|---|
+  | SDK Client | SDK | `import { HarnessClient }` | TypeScript SDK for external developers |
+  | SDK Protocol | Transport | `JsonRpcLineTransport` | NDJSON stdio wire protocol |
+  | SDK Server | Cordis plugin | `HarnessSdkJsonRpcServer` | Server-side JSON-RPC for SDK clients |
+  | ACP server | Cordis plugin / stdio | `@deepseek-ai/dsh-acp` | Agent Client Protocol (open standard) |
+  | API Gateway | Typert Remote | `TypertGatewayService` | Client API endpoint dispatcher |
+  | API Remotes | BFF | `createApiRemoteAgentResolver` | Remote agent/session lookup |
+
+#### Compliance
+- License audit: pass (all MIT, `@agentclientprotocol/sdk` Apache-2.0 listed in THIRD_PARTY_NOTICES)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings from this phase)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed (SDK import, session management, ACP endpoint, REST API, examples)
+- Smoke tests: 4/4 passed (no FATAL, CLI help, no broken imports, .env gitignored)
+- Unit tests: 205/232 passed (16 test files; 27 pre-existing env failures in sdk-client.spec.ts)
+
+#### Known Issues
+- 27 tests in `sdk-client.spec.ts` fail due to Node.js v22.17.1 not supporting `.ts` file
+  extensions in subprocess ESM loading (`ERR_UNKNOWN_FILE_EXTENSION`). Same failures
+  occur in the learn-harness source — pre-existing environment issue, not a code defect.
+  Resolution: upgrade to Node.js v22.19.0+ or use `--experimental-strip-types`.
+
+### Next
+
+- Phase 12.2 (v1.2.1) — RHEA Mendukung Hook Eksternal (prereq 12.1 now satisfied).
+- Phase 12.3 (v1.2.2) — RHEA Bisa Diakses via CLI Headless (prereq 12.1 now satisfied).
 
 ### Phase 11.1 — AI Bisa Pakai Skill  ✅
 
