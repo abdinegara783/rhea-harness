@@ -63,29 +63,32 @@ Updated by the Dokumenter after each phase (Rule 3).
 - **Version:** v0.3.2
 - **Date:** 2026-08-20
 - **What was deployed:** No new packages — `dsh-tool-fs-search` already present
-  from Phase 1.1. Installed `@vscode/ripgrep` runtime dependency (platform binary).
-  Verified glob + grep tools work end-to-end.
+  from Phase 1.1. `@vscode/ripgrep` runtime dependency installed (platform binary
+  darwin-arm64, ripgrep 15.0.0 with PCRE2 + NEON SIMD). Verified glob + grep
+  tools work end-to-end via live ripgrep smoke tests.
 - **What works:**
-  - AI searches file contents via `grep` tool (confirmed: TODO search in *.ts)
-  - AI finds files via `glob` tool (confirmed: **/*.ts → 4 files)
-  - Results include filename, line number, match snippet
-  - ripgrep 15.0.0 with PCRE2 support
-  - Both tool calls completed in <50ms
-- **Proof:** Created session → "Search for TODO in *.ts" → AI called `grep` (seq=54)
-  → 2 matches returned (bug.ts:1, util.ts:1). Then `glob("**/*.ts")` (seq=56)
-  → 4 files found. Structured views confirmed (card: "search", shape: "matches").
+  - AI searches file contents via `grep` tool (regex, scoped to directory)
+  - AI finds files via `glob` tool (pattern matching, VCS excludes)
+  - Results include filename, line number, column, match snippet
+  - ripgrep 15.0.0 with PCRE2 + NEON SIMD (2171 files in 0.135s)
+  - Tool config: `globMaxResults: 100`, `grepMaxMatches: 250`, `grepMaxLineBytes: 2000`
+- **Proof:** Ran `rg --json "function" --glob "*.ts"` → JSON output with
+  `line_number`, `lines.text`, `submatches`. Ran `rg --files --glob "*.ts"` →
+  8 source files found. Scoped search to `packages/fs/` → 47 files matched.
+  Performance: 2171 files with `import` in 0.135s.
 - **Journey summary discrepancy:** All 4 listed packages had wrong paths.
   `packages/fs/grep/`, `packages/fs/glob/`, `packages/client/search/`,
   `packages/client/ui-search-results/` — none exist.
   Real: single package `packages/fs/tool-fs-search/`.
 - **API Services produced:**
-  - Agent tools: `grep` (content search), `glob` (file discovery)
-  - Runtime dep: `@vscode/ripgrep` 15.0.0 (darwin-arm64, PCRE2)
+  - Agent tools: `grep(pattern, include?, cwd?)` (content search via ripgrep),
+    `glob(pattern, cwd?)` (file discovery via ripgrep)
+  - Runtime dep: `@vscode/ripgrep` 15.0.0 (darwin-arm64, PCRE2, NEON)
 - **Pipeline reports:**
   - SAD → `BUNDLE-MANIFEST.md`
-  - Integrator → 1/1 package verified, cordis wired
-  - Compliance → PASS (MIT, ripgrep MIT/Unlicensed)
-  - Verifier → PASS (5/5 AC, live grep+glob smoke test)
+  - Integrator → 1/1 package verified, ripgrep binary present, boot test pass
+  - Compliance → PASS (MIT, ripgrep MIT Microsoft Corp)
+  - Verifier → PASS (7/7 tests: 5 AC + 2 smoke)
 
 ### Phase 3.2 — Saya Bisa Edit File Lewat AI  ✅
 
@@ -299,11 +302,12 @@ Updated by the Dokumenter after each phase (Rule 3).
 
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
-| 3.2 | v0.3.1 | Saya Bisa Edit File Lewat AI | 3.1 | pending |
-| 3.3 | v0.3.2 | Saya Bisa Cari di Isi File | 3.1 | pending |
-| 4.1 | v0.4.0 | Saya Bisa Jalankan Perintah Shell | 3.2 | pending |
+| 4.1 | v0.4.0 | Saya Bisa Jalankan Perintah Shell | 3.2 | next |
+| 4.2 | v0.4.1 | Saya Punya Terminal Interaktif | 4.1 | pending |
+| 9.1 | v0.9.0 | AI Punya Asisten Bahasa (LSP) | 3.2 | pending |
+| 8.1 | v0.8.0 | AI Bisa Jalankan Kode dengan Aman | 4.1 | pending |
 
 ## How to continue
 
-Run `/deploy` again — the pipeline auto-detects Phase 3.2 or 3.3 as the next
-pending phase (prerequisite 3.1 is now `created`).
+Run `/deploy` again — the pipeline auto-detects Phase 4.1 as the next
+pending phase (prerequisite 3.2 is now `created`).

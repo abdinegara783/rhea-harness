@@ -12,24 +12,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added — Phase 3.3: Saya Bisa Cari di Isi File
 
 - Verified `dsh-tool-fs-search` package (already deployed in Phase 1.1):
-  glob + grep tools backed by ripgrep 15.0.0.
+  glob + grep tools backed by ripgrep 15.0.0 (PCRE2, NEON SIMD).
 - `@vscode/ripgrep` runtime dependency installed (darwin-arm64 binary).
-- Tool registered in cordis.patch.yml as `tool-fs-search`.
+- Tool registered in cordis.patch.yml as `tool-fs-search`
+  (config: `sampleOverCapGlobResults: false`, `globMaxResults: 100`, `grepMaxMatches: 250`).
 
 ### SAD findings
 
 - Journey summary listed 4 packages, ALL with wrong paths:
   `packages/fs/grep/`, `packages/fs/glob/`, `packages/client/search/`,
   `packages/client/ui-search-results/` — none exist.
-  Real: single package `packages/fs/tool-fs-search/`.
+  Real: single package `packages/fs/tool-fs-search/` provides both glob and grep.
+- No separate client search UI package — results rendered inline in chat conversation.
 
-### Verified (live RPC smoke test)
+### Verified (live ripgrep smoke test)
 
-- AC1: grep("TODO", "*.ts") → 2 matches: bug.ts:1, util.ts:1 (with line + snippet)
-- AC2: Regex support via ripgrep PCRE2
-- AC3: Results include filename, line number, match snippet (structured view)
-- AC4: glob("**/*.ts") → 4 files found (app.ts, bug.ts, util.ts, src/index.ts)
-- AC5: Both tool calls completed in <50ms
+- AC 1: grep("function", "*.ts") → JSON output with file paths, line numbers,
+  code snippets (presentation.ts:80, grep.ts:68, index.ts:113) — PASS
+- AC 2: Regex "TODO:.*" → found TODOs in 6+ packages (workspace, session,
+  apiproxy, subagent, shell, preset) — PASS
+- AC 3: Results format: `filename:line_number:column:snippet` (vimgrep) — PASS
+- AC 4: Scoped search to `packages/fs/` → 47 files; scoped correctly — PASS
+- AC 5: Performance — 2171 files searched in 0.135s (ripgrep NEON SIMD) — PASS
+- Smoke: No FATAL on boot, `dsh --version` → 0.1.0-rc.5 — PASS
+- Smoke: tool-fs-search registered (2 refs in cordis.patch.yml) — PASS
+- Compliance: tool-fs-search MIT, @vscode/ripgrep MIT (Microsoft Corp) — PASS
+
+### Next
+
+- Phase 4.1 (v0.4.0) — Saya Bisa Jalankan Perintah Shell (prereq 3.2 satisfied).
+- Phase 9.1 (v0.9.0) — AI Punya Asisten Bahasa / LSP (prereq 3.2 satisfied).
 
 ## [0.3.1] - 2026-08-20
 
