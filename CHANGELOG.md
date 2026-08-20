@@ -7,6 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-08-20
+
+### Added — Phase 11.2: AI Bisa Pakai Preset Persona
+
+- Persona composition (`@deepseek-ai/dsh-persona`): system-prompt persona
+  section composer. `PERSONA_SECTION`, `PERSONA_ORDER`, `apply()`, `inject()`
+  for composing persona instructions into agent system prompts.
+- Agent presets (`@deepseek-ai/dsh-agent-presets`): per-session agent
+  composition from preset `cordis.yml` files. `discoverPresets()`,
+  `mountPreset()`, `readComposition()`, `copyComposition()`,
+  `deleteComposition()` for full preset lifecycle management. Settings
+  namespace: `agent-presets`. Composition file: `agent.cordis.yml`.
+  Metadata file: `preset.yml`.
+- Skill registry (`@deepseek-ai/dsh-skill`): already deployed in Phase 11.1,
+  verified as persona skill/tool-set backbone. Presets include skill and
+  tool configurations.
+- Agent-preset UI (`@deepseek-ai/dsh-client-ui-agent-preset`): browser-surface
+  agent-preset surfaces — the default for later sessions, the current
+  session's seat, and the composition editor. Injects into conversation,
+  settings, and sidebar slots.
+- Cordis UI card (`@deepseek-ai/dsh-client-ui-cordis`): already deployed in
+  Phase 10.1, verified as dynamic-plugin definition card for persona plugins.
+
+#### Compliance
+- License audit: pass (all MIT, no new vendor packages)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings from this phase)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed (persona selector, reviewer/debugger personas, custom persona save, switch persona)
+- Smoke tests: 3/3 passed (no FATAL errors, CLI help works, headless launch responds)
+- LLM smoke test: pass (OpenRouter qwen/qwen3.7-flash responded PERSONA_TEST_OK)
+- Build: host + client success, zero errors, typecheck pass
+
 ## [1.1.0] - 2026-08-20
 
 ### Added — Phase 11.1: AI Bisa Pakai Skill

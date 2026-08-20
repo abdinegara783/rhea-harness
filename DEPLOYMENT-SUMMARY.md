@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v1.1.0** — Phase 11.1: AI Bisa Pakai Skill (created)
+**v1.1.1** — Phase 11.2: AI Bisa Pakai Preset Persona (created)
 
 ## API Service Catalog
 
@@ -128,6 +128,12 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 11.1 | Skill list (RPC) | RPC | `POST /api/skill.list` | List available skills (already cataloged in 2.1, now verified with full provider chain) |
 | 11.1 | Skill UI row | Client component | `SkillRow` | Browser-surface skill display with locale support |
 | 11.1 | Skill invocation policy | Policy | `modelInvocable`, `userInvocable` | Per-skill invocation controls (enable/disable for model and user surfaces) |
+| 11.2 | Persona composition | Agent seam | `PERSONA_SECTION`, `apply()`, `inject()` | System-prompt persona section composer (per-session persona instructions) |
+| 11.2 | Agent presets | Agent seam | `discoverPresets()`, `mountPreset()` | Per-session agent composition from preset `cordis.yml` files |
+| 11.2 | Preset settings | Settings | `agent-presets` namespace | Settings integration for persona selection (SETTINGS_NAMESPACE) |
+| 11.2 | Composition file | Config | `agent.cordis.yml` | Per-preset agent composition (tools, skills, model config) |
+| 11.2 | Preset metadata | Config | `preset.yml` | Preset metadata (name, description, persona type) |
+| 11.2 | Agent-preset UI | Client seat | `conversation.input.preset` | Browser-surface persona selector + composition editor |
 
 ## Deployed Phases
 
@@ -178,10 +184,56 @@ Updated by the Dokumenter after each phase (Rule 3).
 - Smoke tests: 4/4 passed
 - Build: zero errors, typecheck pass
 
+### Phase 11.2 — AI Bisa Pakai Preset Persona  ✅
+
+- **Version:** v1.1.1
+- **Date:** 2026-08-20
+- **What was deployed:** 5 packages verified and built:
+  - `@deepseek-ai/dsh-persona` (packages/preset/persona/)
+    — System-prompt persona section composer. `PERSONA_SECTION`,
+    `PERSONA_ORDER`, `apply()`, `inject()` for composing persona
+    instructions into agent system prompts.
+  - `@deepseek-ai/dsh-agent-presets` (packages/preset/agent-presets/)
+    — Per-session agent composition from preset `cordis.yml` files.
+    `discoverPresets()`, `mountPreset()`, `readComposition()`,
+    `copyComposition()`, `deleteComposition()` for full preset lifecycle.
+    Settings namespace: `agent-presets`. Composition file: `agent.cordis.yml`.
+  - `@deepseek-ai/dsh-skill` (packages/skill/skill/)
+    — Skill provider registry (already deployed Phase 11.1), verified as
+    persona skill/tool-set backbone.
+  - `@deepseek-ai/dsh-client-ui-agent-preset` (packages/client/ui-agent-preset/)
+    — Browser-surface agent-preset surfaces: default for later sessions,
+    current session seat, and composition editor.
+  - `@deepseek-ai/dsh-client-ui-cordis` (packages/extensions/ui-cordis/)
+    — Cordis dynamic-plugin definition card (already deployed Phase 10.1),
+    verified as persona plugin UI.
+- **Build status:** success (host + client, zero errors)
+- **Typecheck:** pass
+- **API Services produced:**
+  | Service | Type | Endpoint / Method | Notes |
+  |---|---|---|---|
+  | Persona composition | Agent seam | `PERSONA_SECTION`, `apply()`, `inject()` | System-prompt persona composer |
+  | Agent presets | Agent seam | `discoverPresets()`, `mountPreset()` | Per-session preset composition |
+  | Preset settings | Settings | `agent-presets` namespace | Persona selection in settings |
+  | Composition file | Config | `agent.cordis.yml` | Per-preset agent composition |
+  | Preset metadata | Config | `preset.yml` | Preset name, description, type |
+  | Agent-preset UI | Client seat | `conversation.input.preset` | Persona selector + editor |
+
+#### Compliance
+- License audit: pass (all MIT, no new vendor packages)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings from this phase)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed
+- Smoke tests: 3/3 passed (no FATAL, CLI help, headless launch)
+- LLM smoke test: pass (OpenRouter qwen/qwen3.7-flash)
+- Build: zero errors, typecheck pass
+
 ### Next
 
-- Phase 11.2 (v1.1.1) — AI Bisa Pakai Preset Persona (prereq 10.1 satisfied).
 - Phase 11.3 (v1.1.2) — AI Mendukung Workflow & Penjadwalan (prereq 5.3 satisfied).
+- Phase 12.1 (v1.2.0) — RHEA Bisa Diakses via SDK & ACP (prereq 2.2 satisfied).
 
 ### Phase 10.3 — AI Bisa Pakai E2B Sandbox Cloud  ✅
 
@@ -1224,14 +1276,12 @@ Updated by the Dokumenter after each phase (Rule 3).
 
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
-| 9.1 | v0.9.0 | AI Punya Asisten Bahasa (LSP) | 3.2 | created |
-| 10.1 | v1.0.0 | AI Bisa Pakai Plugin Dinamis (Cordis) | 2.1 | created |
-| 10.2 | v1.0.1 | AI Bisa Pakai MCP Server | 2.1 | created |
-| 10.3 | v1.0.2 | AI Bisa Pakai E2B Sandbox Cloud | 8.1 | created |
-| 11.1 | v1.1.0 | AI Bisa Pakai Skill | 2.1 | pending |
-| 11.2 | v1.1.1 | AI Bisa Pakai Preset Persona | 10.1 | pending |
+| 11.3 | v1.1.2 | AI Mendukung Workflow & Penjadwalan | 5.3 | pending |
+| 12.1 | v1.2.0 | RHEA Bisa Diakses via SDK & ACP | 2.2 | pending |
+| 12.2 | v1.2.1 | RHEA Mendukung Hook Eksternal | 12.1 | pending |
+| 12.3 | v1.2.2 | RHEA Bisa Diakses via CLI Headless | 12.1 | pending |
 
 ## How to continue
 
 Run `/deploy` again — the pipeline auto-detects the next pending phase.
-Phases 11.1 (Skills), 11.2 (Persona), 11.3 (Workflow), 12.1 (SDK & ACP) are now unblocked.
+Phases 11.3 (Workflow), 12.1 (SDK & ACP) are now unblocked.
