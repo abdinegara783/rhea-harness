@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-08-20
+
+### Added — Phase 11.3: AI Mendukung Workflow & Penjadwalan
+
+- Workflow engine (`@deepseek-ai/dsh-workflow`): workflow capability seam
+  with `ctx.workflowEngine` service, run vocabulary (`WorkflowEngine`,
+  `WorkflowRunId`), and `workflow/*` lifecycle events. Host face +
+  browser-safe types subpath.
+- Workflow worker thread (`@deepseek-ai/dsh-workflow-worker-thread`):
+  worker-thread engine executing model-written orchestration scripts off
+  the host event loop, bridging `agent()` calls back to `ctx.subagents`.
+  Grace termination, cancellation, disposal, bounded agent caps.
+- Workflow tool (`@deepseek-ai/dsh-tool-workflow`): model-facing `workflow`
+  tool — agent writes JavaScript orchestration scripts that fan out work
+  across subagents with phases and structured results.
+- Ralph tool (`@deepseek-ai/dsh-tool-ralph`): model-facing fresh-agent
+  Ralph loop over workflow and subagent seams for multi-round objectives.
+- Schedule (`@deepseek-ai/dsh-schedule`): agent-scoped durable reminders
+  (`after`, `at`, `fixed-rate`). Tools: `schedule_create`, `schedule_list`,
+  `schedule_delete`. Event-sourced over session log.
+- Jobs registry (`@deepseek-ai/dsh-jobs`): background job registry
+  (`ctx.jobs`) with shared ids, owner isolation, polling, cancellation,
+  completion listeners.
+- Jobs local (`@deepseek-ai/dsh-jobs-local`): process-local `LocalJobRegistry`
+  as `ctx.jobs` implementation. In-memory, per-kind `<kind>-N` ids.
+- Tool jobs (`@deepseek-ai/dsh-tool-jobs`): model-facing background job
+  tools: `job_output`, `job_list`, `job_kill`.
+- Workflow run UI (`@deepseek-ai/dsh-client-ui-workflow-run`): browser-surface
+  workflow-run conversation node and nested member disclosure.
+- Subagent (`@deepseek-ai/dsh-subagent`): already deployed in Phase 5.3,
+  verified as workflow worker-thread delegation backbone.
+
+#### Compliance
+- License audit: pass (all MIT, no new vendor packages)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings from this phase)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed (workflow define/run, schedule create/list, status visual, error retry)
+- Smoke tests: 3/3 passed (typecheck host+client, no broken imports, .env gitignored)
+- Unit tests: 444/444 passed (24 test files across workflow, schedule, jobs)
+
 ## [1.1.1] - 2026-08-20
 
 ### Added — Phase 11.2: AI Bisa Pakai Preset Persona

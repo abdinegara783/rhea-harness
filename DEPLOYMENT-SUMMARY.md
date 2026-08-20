@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v1.1.1** — Phase 11.2: AI Bisa Pakai Preset Persona (created)
+**v1.1.2** — Phase 11.3: AI Mendukung Workflow & Penjadwalan (created)
 
 ## API Service Catalog
 
@@ -134,6 +134,19 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 11.2 | Composition file | Config | `agent.cordis.yml` | Per-preset agent composition (tools, skills, model config) |
 | 11.2 | Preset metadata | Config | `preset.yml` | Preset metadata (name, description, persona type) |
 | 11.2 | Agent-preset UI | Client seat | `conversation.input.preset` | Browser-surface persona selector + composition editor |
+| 11.3 | Workflow engine | Agent seam | `ctx.workflowEngine` | Workflow capability seam: run vocabulary, lifecycle events |
+| 11.3 | Workflow worker thread | Provider | `WorkflowWorkerThread` | Worker-thread engine for model-written orchestration scripts |
+| 11.3 | workflow tool | Agent tool | `workflow` | Model-facing multi-step JS orchestration across subagents |
+| 11.3 | ralph tool | Agent tool | `ralph` | Fresh-agent Ralph loop over workflow + subagent seams |
+| 11.3 | schedule_create | Agent tool | `schedule_create` | Durable reminders (after, at, every) |
+| 11.3 | schedule_list | Agent tool | `schedule_list` | List active schedule reminders |
+| 11.3 | schedule_delete | Agent tool | `schedule_delete` | Delete a schedule reminder |
+| 11.3 | Jobs registry | Agent seam | `ctx.jobs` | Background job registry: ids, owner isolation, polling, cancellation |
+| 11.3 | job_output | Agent tool | `job_output` | Read background job output |
+| 11.3 | job_list | Agent tool | `job_list` | List background jobs |
+| 11.3 | job_kill | Agent tool | `job_kill` | Kill a background job |
+| 11.3 | session/jobs | SSE event | `session/jobs` | Background job visibility in session event stream |
+| 11.3 | Workflow run UI | Client component | `WorkflowRunPanel` | Browser-surface workflow run display + nested members |
 
 ## Deployed Phases
 
@@ -230,10 +243,69 @@ Updated by the Dokumenter after each phase (Rule 3).
 - LLM smoke test: pass (OpenRouter qwen/qwen3.7-flash)
 - Build: zero errors, typecheck pass
 
+### Phase 11.3 — AI Mendukung Workflow & Penjadwalan  ✅
+
+- **Version:** v1.1.2
+- **Date:** 2026-08-20
+- **What was deployed:** 11 packages verified and built:
+  - `@deepseek-ai/dsh-workflow` (packages/workflow/workflow/)
+    — Workflow capability seam: `ctx.workflowEngine` service, run vocabulary
+    (`WorkflowEngine`, `WorkflowRunId`), and `workflow/*` lifecycle events.
+  - `@deepseek-ai/dsh-workflow-worker-thread` (packages/workflow/workflow-worker-thread/)
+    — Worker-thread engine executing model-written orchestration scripts off
+    the host event loop, bridging `agent()` calls to `ctx.subagents`.
+  - `@deepseek-ai/dsh-tool-workflow` (packages/workflow/tool-workflow/)
+    — Model-facing `workflow` tool for multi-step JS orchestration across subagents.
+  - `@deepseek-ai/dsh-tool-ralph` (packages/workflow/tool-ralph/)
+    — Model-facing fresh-agent Ralph loop over workflow + subagent seams.
+  - `@deepseek-ai/dsh-schedule` (packages/schedule/schedule/)
+    — Agent-scoped durable reminders (`after`, `at`, `fixed-rate`).
+    Tools: `schedule_create`, `schedule_list`, `schedule_delete`.
+  - `@deepseek-ai/dsh-jobs` (packages/jobs/jobs/)
+    — Background job registry (`ctx.jobs`): shared ids, owner isolation,
+    polling, cancellation, completion listeners.
+  - `@deepseek-ai/dsh-jobs-local` (packages/jobs/jobs-local/)
+    — Process-local `LocalJobRegistry` as `ctx.jobs`. In-memory, per-kind ids.
+  - `@deepseek-ai/dsh-tool-jobs` (packages/jobs/tool-jobs/)
+    — Model-facing background job tools: `job_output`, `job_list`, `job_kill`.
+  - `@deepseek-ai/dsh-subagent` (packages/subagent/subagent/)
+    — Already deployed Phase 5.3, verified as workflow worker-thread backbone.
+  - `@deepseek-ai/dsh-client-ui-workflow-run` (packages/client/ui-workflow-run/)
+    — Browser-surface workflow-run conversation node and nested member display.
+- **Build status:** success (host + client typecheck, zero errors)
+- **Test results:** 444/444 passed (24 test files)
+- **API Services produced:**
+  | Service | Type | Endpoint / Method | Notes |
+  |---|---|---|---|
+  | Workflow engine | Agent seam | `ctx.workflowEngine` | Run vocabulary, lifecycle events |
+  | Workflow worker thread | Provider | `WorkflowWorkerThread` | Off-loop orchestration |
+  | workflow tool | Agent tool | `workflow` | Multi-step JS orchestration |
+  | ralph tool | Agent tool | `ralph` | Fresh-agent Ralph loop |
+  | schedule_create | Agent tool | `schedule_create` | Durable reminders (after/at/every) |
+  | schedule_list | Agent tool | `schedule_list` | List active reminders |
+  | schedule_delete | Agent tool | `schedule_delete` | Delete reminder |
+  | Jobs registry | Agent seam | `ctx.jobs` | Background job registry |
+  | job_output | Agent tool | `job_output` | Read job output |
+  | job_list | Agent tool | `job_list` | List background jobs |
+  | job_kill | Agent tool | `job_kill` | Kill background job |
+  | session/jobs | SSE event | `session/jobs` | Job visibility stream |
+  | Workflow run UI | Client | `WorkflowRunPanel` | Browser workflow display |
+
+#### Compliance
+- License audit: pass (all MIT, no new vendor packages)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings from this phase)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed
+- Smoke tests: 3/3 passed (typecheck host+client, no broken imports, .env gitignored)
+- Unit tests: 444/444 passed (24 test files)
+
 ### Next
 
-- Phase 11.3 (v1.1.2) — AI Mendukung Workflow & Penjadwalan (prereq 5.3 satisfied).
 - Phase 12.1 (v1.2.0) — RHEA Bisa Diakses via SDK & ACP (prereq 2.2 satisfied).
+- Phase 12.2 (v1.2.1) — RHEA Mendukung Hook Eksternal (prereq 12.1).
+- Phase 12.3 (v1.2.2) — RHEA Bisa Diakses via CLI Headless (prereq 12.1).
 
 ### Phase 10.3 — AI Bisa Pakai E2B Sandbox Cloud  ✅
 
@@ -1276,7 +1348,6 @@ Updated by the Dokumenter after each phase (Rule 3).
 
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
-| 11.3 | v1.1.2 | AI Mendukung Workflow & Penjadwalan | 5.3 | pending |
 | 12.1 | v1.2.0 | RHEA Bisa Diakses via SDK & ACP | 2.2 | pending |
 | 12.2 | v1.2.1 | RHEA Mendukung Hook Eksternal | 12.1 | pending |
 | 12.3 | v1.2.2 | RHEA Bisa Diakses via CLI Headless | 12.1 | pending |
@@ -1284,4 +1355,4 @@ Updated by the Dokumenter after each phase (Rule 3).
 ## How to continue
 
 Run `/deploy` again — the pipeline auto-detects the next pending phase.
-Phases 11.3 (Workflow), 12.1 (SDK & ACP) are now unblocked.
+Phases 12.1 (SDK & ACP), 12.2 (Hook Eksternal), 12.3 (CLI Headless) are now unblocked.
