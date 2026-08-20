@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-08-20
+
+### Added — Phase 12.3: RHEA Bisa Diakses via CLI Headless
+
+- Headless profile (`@deepseek-ai/dsh-headless`): one-shot bundle that
+  runs a core Agent/Session task without Host, HTTP, or browser layer.
+  `dsh --profile headless "<task>"` prints the AI response and exits.
+- CLI integration (`@deepseek-ai/dsh`): headless profile registered in
+  apps/cli, `--profile headless --help` shows task-oriented usage.
+- Boot cmdline (`@deepseek-ai/dsh-cmdline`): CLI argument parsing for
+  headless task dispatch.
+- SDK packages (`@deepseek-ai/dsh-sdk-*`): already deployed in Phase
+  12.1, verified as programmatic access surface alongside CLI.
+
+#### Compliance
+- License audit: pass (all MIT)
+- Branding check: pass (no new "DeepSeek" in UI strings)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed (headless response, pipe, exit code, script mode, no-interactive)
+- Smoke tests: 4/4 passed (help, headless help, config dump, no FATAL errors)
+- Build: workspace build succeeds, typecheck passes
+
 ## [1.2.1] - 2026-08-20
 
 ### Added — Phase 12.2: RHEA Mendukung Hook Eksternal

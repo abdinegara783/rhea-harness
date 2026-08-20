@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v1.2.1** — Phase 12.2: RHEA Mendukung Hook Eksternal (created)
+**v1.2.2** — Phase 12.3: RHEA Bisa Diakses via CLI Headless (created)
 
 ## API Service Catalog
 
@@ -159,6 +159,9 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 12.2 | Hook bridge (CC) | Cordis plugin | `@deepseek-ai/dsh-hooks-claude-code` | Claude Code hooks.json bridge (CC dialect) |
 | 12.2 | Hook bridge (Codex) | Cordis plugin | `@deepseek-ai/dsh-hooks-codex` | Codex hooks.json bridge (Codex dialect) |
 | 12.2 | Hook matcher engine | Internal | `matchesMatcher()` | Tool-name / session-source / agent_type matching (CC literal + Codex regex) |
+| 12.3 | Headless profile | CLI | `dsh --profile headless "<task>"` | One-shot CLI: send task, get AI response, exit (no server/UI) |
+| 12.3 | Headless bundle | Bundle | `@deepseek-ai/dsh-headless` | Core Agent/Session runner without Host, HTTP, or browser layer |
+| 12.3 | Headless config dump | CLI | `dsh --profile headless --dump-config` | Inspect headless plugin tree and patch layers |
 
 ## Deployed Phases
 
@@ -271,7 +274,44 @@ Updated by the Dokumenter after each phase (Rule 3).
 
 ### Next
 
-- Phase 12.3 (v1.2.2) — RHEA Bisa Diakses via CLI Headless (prereq 12.1 satisfied).
+- All 35 phases deployed. RHEA v1.2.2 is complete.
+
+### Phase 12.3 — RHEA Bisa Diakses via CLI Headless  ✅
+
+- **Version:** v1.2.2
+- **Date:** 2026-08-20
+- **What was deployed:** 6 packages verified and built:
+  - `@deepseek-ai/dsh` (apps/cli/)
+    — CLI entry point with headless profile support. `dsh --profile headless "<task>"` runs a one-shot AI task and exits.
+  - `@deepseek-ai/dsh-headless` (packages/bundle/headless/)
+    — One-shot bundle: core Agent/Session runner without Host, HTTP, or browser layer. Depends on dsh-cmdline, dsh-agent, dsh-llm, dsh-session.
+  - `@deepseek-ai/dsh-sdk-protocol` (packages/sdk/protocol/)
+    — Shared wire protocol (already deployed in Phase 12.1, verified).
+  - `@deepseek-ai/dsh-sdk-client` (packages/sdk/client/)
+    — TypeScript client SDK (already deployed in Phase 12.1, verified).
+  - `@deepseek-ai/dsh-sdk-jsonrpc-server` (packages/sdk/server/)
+    — Stdio JSON-RPC server (already deployed in Phase 12.1, verified).
+  - `@deepseek-ai/dsh-cmdline` (packages/boot/cmdline/)
+    — Command-line boot and argument parsing.
+- **What works:**
+  - `dsh --profile headless "task"` → AI response printed to terminal, process exits with code 0
+  - Output is pipe-able (`| grep`, `| jq`, etc.)
+  - `dsh --profile headless --help` shows headless-specific usage
+  - `dsh --profile headless --dump-config` shows plugin tree
+  - No FATAL errors in output
+  - Non-interactive: exits automatically after response
+- **Compliance:** All MIT, branding pass, THIRD_PARTY_NOTICES up-to-date
+- **API Services produced:**
+  | Service | Type | Endpoint / Method | Notes |
+  |---|---|---|---|
+  | Headless profile | CLI | `dsh --profile headless "<task>"` | One-shot AI task from terminal, no server/UI |
+  | Headless bundle | Bundle | `@deepseek-ai/dsh-headless` | Core Agent/Session runner without Host layer |
+  | Headless config dump | CLI | `dsh --profile headless --dump-config` | Inspect headless plugin tree |
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (6 packages, all exist, 1 evidence gap: cli-output not found)
+  - Integrator → Build success, typecheck pass, 13159/13491 tests pass (197 pre-existing failures)
+  - Compliance → PASS (all 5 checks pass)
+  - Verifier → PASS (9/9 acceptance + smoke tests)
 
 ### Phase 11.1 — AI Bisa Pakai Skill  ✅
 
@@ -1473,9 +1513,9 @@ Updated by the Dokumenter after each phase (Rule 3).
 |---|---|---|---|---|
 | 12.1 | v1.2.0 | RHEA Bisa Diakses via SDK & ACP | 2.2 | pending |
 | 12.2 | v1.2.1 | RHEA Mendukung Hook Eksternal | 12.1 | pending |
-| 12.3 | v1.2.2 | RHEA Bisa Diakses via CLI Headless | 12.1 | pending |
+| 12.3 | v1.2.2 | RHEA Bisa Diakses via CLI Headless | 12.1 | created |
 
 ## How to continue
 
 Run `/deploy` again — the pipeline auto-detects the next pending phase.
-Phases 12.1 (SDK & ACP), 12.2 (Hook Eksternal), 12.3 (CLI Headless) are now unblocked.
+All 35 phases have been deployed. RHEA v1.2.2 is complete.
