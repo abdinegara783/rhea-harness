@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.5.0** — Phase 5.1: Sesi Chat Bisa Dipangkas Otomatis (created)
+**v0.5.1** — Phase 5.2: Daftar Tugas & Todo Agent (created)
 
 ## API Service Catalog
 
@@ -69,8 +69,41 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 4.2 | terminal_signal | Agent tool | `terminal_signal(id, signal)` | Send signal to foreground process group |
 | 4.2 | terminal_close | Agent tool | `terminal_close(id)` | Close terminal and await process tree cleanup |
 | 4.2 | terminal_list | Agent tool | `terminal_list()` | List owned persistent terminal sessions |
+| 5.2 | todo/write | Agent tool | `todo/write(items[])` | AI replaces entire todo list (whole-list snapshot, status: pending/in_progress/completed) |
+| 5.2 | Todo projection | Session projection | `todos: TodoItem[] \| null` | Session projection key for todo state (last-write-wins) |
 
 ## Deployed Phases
+
+### Phase 5.2 — Daftar Tugas & Todo Agent  ✅
+
+- **Version:** v0.5.1
+- **Date:** 2026-08-20
+- **What was deployed:** No new packages — all 4 todo/feedback packages already
+  present from Phase 1.1 monorepo deployment. Verified the todo tool and feedback
+  pipeline works end-to-end via 502 unit tests and runtime import smoke tests.
+- **What works:**
+  - AI creates/updates todo lists via `todo/write` tool (whole-list replacement)
+  - Todo items have 3 statuses: pending, in_progress, completed
+  - Session projection key `todos` tracks latest todo snapshot (last-write-wins)
+  - Config option `allowParallelInProgress` controls single vs. multi-active tasks
+  - Todo UI renders in conversation (todo-row.tsx in ui-tool, todo-panel in ui-conversation)
+  - Feedback pipeline: command-feedback (slash command) + message-feedback (per-message rating)
+  - Agent interface: registry, initiator scope, event vocabulary
+- **Proof:** Ran `npx vitest` on todo packages (41/41 pass), feedback packages
+  (34/34 pass), core/agent (427/428 pass, 1 skipped). TypeScript host + client
+  builds: 0 errors. All 4 packages load at runtime. Client bundles present.
+- **Journey summary discrepancy:** `packages/client/ui-todo/` does not exist —
+  todo UI embedded in `client/ui-tool/` (todo-row.tsx) and `client/ui-conversation/`.
+  `packages/feedback/` has 2 sub-packages (command-feedback, message-feedback).
+  `packages/core/agent/` actual name: `@deepseek-ai/dsh-agent`.
+- **API Services produced:**
+  - Agent tool: `todo/write(items[])` — whole-list snapshot replacement
+  - Session projection: `todos` key (TodoItem[] | null)
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (6 packages + 1 dependency, all exist, deps satisfied)
+  - Integrator → build success, 502/502 Phase 5.2 tests passed, typecheck pass
+  - Compliance → PASS (all MIT, no new vendor packages)
+  - Verifier → PASS (9/9 tests: 5 AC + 4 smoke)
 
 ### Phase 5.1 — Sesi Chat Bisa Dipangkas Otomatis  ✅
 
@@ -426,11 +459,12 @@ Updated by the Dokumenter after each phase (Rule 3).
 
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
-| 5.2 | v0.5.1 | Daftar Tugas & Todo Agent | 2.1 | next |
+| 5.3 | v0.5.2 | Saya Bisa Bikin Sub-Agent | 2.1 | next |
+| 5.4 | v0.5.3 | Saya Bisa Menentukan Tujuan & Rencana | 5.2 | next |
 | 8.1 | v0.8.0 | AI Bisa Jalankan Kode dengan Aman | 4.2 | next |
 | 9.1 | v0.9.0 | AI Punya Asisten Bahasa (LSP) | 3.2 | pending |
 
 ## How to continue
 
 Run `/deploy` again — the pipeline auto-detects the next pending phase.
-Phases 5.2 (Todo Agent), 5.3 (Sub-Agent), 6.1 (Model Picker), 7.1 (Web Browse), 8.1 (Code Execution), 10.1 (Cordis Plugins), 10.2 (MCP Server), and 11.1 (Skills) are now unblocked.
+Phases 5.3 (Sub-Agent), 5.4 (Goal & Plan), 6.1 (Model Picker), 7.1 (Web Browse), 8.1 (Code Execution), 10.1 (Cordis Plugins), 10.2 (MCP Server), and 11.1 (Skills) are now unblocked.

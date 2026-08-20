@@ -7,6 +7,60 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-08-20
+
+### Added — Phase 5.2: Daftar Tugas & Todo Agent
+
+- Verified all 4 todo/feedback packages (already deployed in Phase 1.1):
+  `dsh-tool-todo` (model-facing `todo/write` tool — whole-list replacement
+  with status tracking: pending, in_progress, completed),
+  `dsh-command-feedback` (slash command for session feedback),
+  `dsh-message-feedback` (per-message rating/note sidecar),
+  `dsh-agent` (agent interface, registry, initiator scope).
+- Todo UI components verified in client packages:
+  `dsh-client-ui-tool` (todo-row.tsx — tool result card rendering),
+  `dsh-client-ui-conversation` (todo-panel — conversation-level todo view).
+- `tool-todo` registered as agent tool: `todo/write` (whole-list snapshot
+  replacement, session projection key `todos`).
+
+### SAD findings
+
+- Journey summary listed 4 packages. `packages/client/ui-todo/` does not
+  exist as standalone — todo UI is embedded in `packages/client/ui-tool/`
+  (todo-row.tsx) and `packages/client/ui-conversation/` (todo-panel spec).
+- `packages/feedback/` is a directory with 2 sub-packages: `command-feedback/`
+  and `message-feedback/` (not a single package).
+- `packages/core/agent/` actual package name is `@deepseek-ai/dsh-agent`.
+
+### Verified
+
+- AC 1 (todo list creation): tool-todo exports `todo/write` tool with Config,
+  apply, inject — PASS
+- AC 2 (pending items): 41/41 todo tests pass including projection tests
+  verifying pending state — PASS
+- AC 3 (in-progress): tool-todo.spec.ts 18/18 tests pass covering status
+  transitions (pending → in_progress) — PASS
+- AC 4 (done state): projection.spec.ts 5/5 tests pass verifying completed
+  state tracking — PASS
+- AC 5 (add task): integration.spec.ts 2/2 tests pass verifying full todo
+  lifecycle (add, update, complete) — PASS
+- Smoke: TypeScript host build — 0 errors — PASS
+- Smoke: TypeScript client build — 0 errors — PASS
+- Smoke: All 4 packages load at runtime — PASS
+- Smoke: Client bundles (ui-tool, ui-conversation) present — PASS
+- Compliance: All MIT, no new vendor packages, branding clean
+
+### Verification
+
+- Acceptance tests: 5/5 passed
+- Smoke tests: 4/4 passed
+- Unit tests: 502/502 passed (todo: 41, feedback: 34, core/agent: 427+1 skipped)
+
+### Next
+
+- Phase 5.3 (v0.5.2) — Saya Bisa Bikin Sub-Agent (prereq 2.1 satisfied).
+- Phase 5.4 (v0.5.3) — Saya Bisa Menentukan Tujuan & Rencana (prereq 5.2 now satisfied).
+
 ## [0.5.0] - 2026-08-20
 
 ### Added — Phase 5.1: Sesi Chat Bisa Dipangkas Otomatis
