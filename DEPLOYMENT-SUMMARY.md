@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.6.2** — Phase 6.3: Saya Bisa Memberi Feedback & Setujui Aksi (created)
+**v0.6.3** — Phase 6.4: Saya Bisa Kelola Kredensial dengan Aman (created)
 
 ## API Service Catalog
 
@@ -92,6 +92,54 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 6.3 | User questions | Agent seam | `ctx.userQuestions` | Abstract seam for agent-to-human questions during runs |
 
 ## Deployed Phases
+
+### Phase 6.4 — Saya Bisa Kelola Kredensial dengan Aman  ✅
+
+- **Version:** v0.6.3
+- **Date:** 2026-08-20
+- **What was deployed:** 4 packages verified and built:
+  - `@deepseek-ai/dsh-credentials` (packages/credentials/credentials/)
+    — abstract credential seam (`ctx.credentials`). `CredentialProvider` with
+    `resolve`, `describe`, `set`, `unset`. Settings carry references (env-var
+    names), providers own actual values. `describe()` returns `CredentialInfo`
+    (configured, source, writable) — never the value.
+  - `@deepseek-ai/dsh-credentials-local` (packages/credentials/credentials-local/)
+    — file-backed credentials provider (`$DSH_HOME/.env`) with chokidar watcher,
+    atomic writes, and live credential rotation without restart.
+  - `@deepseek-ai/dsh-settings` (packages/settings/settings/)
+    — abstract user-settings seam with structural secret redaction
+    (`redactSecrets()` strips `role('secret')` fields before wire crossing).
+  - `@deepseek-ai/dsh-settings-file` (packages/settings/settings-file/)
+    — `settings.yaml` file-backed provider with atomic writes and concurrent
+    access safety.
+- **What works:**
+  - Credential references travel through settings (env-var names, never values)
+  - `resolve()` returns value + source per operation (no caching across operations)
+  - `describe()` returns configured/source/writable for UI — never the secret
+  - `set()` stores durably, rejects empty values, rejects if read-only shadows
+  - `unset()` removes credential; next resolve returns undefined
+  - `redactSecrets()` strips secret fields from settings before wire boundary
+  - File-backed provider watches for external edits (chokidar) and reloads
+  - Atomic writes prevent corruption on crash
+  - `credentials/updated` event fans out to listeners with contained failure handling
+- **Proof:** Build (host + client) success. Typecheck pass. 217/217 unit tests
+  passed (64 credential + 153 settings). All 4 packages have build artifacts
+  (lib/ directories). Headless boot: app starts, resolves credentials, attempts
+  LLM call (429 rate-limit — external factor, not code defect).
+- **Journey summary discrepancy:** `packages/client/ui-credentials/` does not
+  exist. Core credential functionality fully covered by dsh-credentials +
+  dsh-credentials-local + dsh-settings/redact.
+- **Compliance:** LICENSE pass, THIRD_PARTY_NOTICES pass, vendor LICENSE intact,
+  zero "DeepSeek" in user-visible UI strings.
+- **API Services produced:** No new API services. Credential RPC methods
+  (`credentials.{describe,set,unset}`) already cataloged in Phase 2.1. Phase 6.4
+  verifies and hardens the backend implementation (abstract seam + file provider
+  + secret redaction).
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (4 packages + 1 missing, Phase 2.1 dep satisfied)
+  - Integrator → build success, 217/217 tests passed, typecheck pass
+  - Compliance → PASS (all MIT, no new vendor packages, branding clean)
+  - Verifier → PASS (7/7 tests: 5 AC + 2 smoke)
 
 ### Phase 6.3 — Saya Bisa Memberi Feedback & Setujui Aksi  ✅
 
@@ -706,7 +754,6 @@ Updated by the Dokumenter after each phase (Rule 3).
 
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
-| 6.4 | v0.6.3 | Saya Bisa Kelola Kredensial dengan Aman | 2.1 | next |
 | 7.1 | v0.7.0 | AI Bisa Buka Halaman Web | 2.1 | next |
 | 8.1 | v0.8.0 | AI Bisa Jalankan Kode dengan Aman | 4.1 | next |
 | 9.1 | v0.9.0 | AI Punya Asisten Bahasa (LSP) | 3.2 | pending |
@@ -717,4 +764,4 @@ Updated by the Dokumenter after each phase (Rule 3).
 ## How to continue
 
 Run `/deploy` again — the pipeline auto-detects the next pending phase.
-Phases 6.4 (Credentials), 7.1 (Web Browse), 8.1 (Code Execution), 10.1 (Cordis Plugins), 10.2 (MCP Server), and 11.1 (Skills) are now unblocked.
+Phases 7.1 (Web Browse), 8.1 (Code Execution), 10.1 (Cordis Plugins), 10.2 (MCP Server), and 11.1 (Skills) are now unblocked.

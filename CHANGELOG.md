@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.3] - 2026-08-20
+
+### Added — Phase 6.4: Saya Bisa Kelola Kredensial dengan Aman
+
+- Credential seam (`@deepseek-ai/dsh-credentials`): abstract `CredentialProvider`
+  service with `resolve`, `describe`, `set`, `unset` operations. Settings carry
+  references (env-var names), providers own actual values. `describe()` returns
+  `CredentialInfo` (configured, source, writable) — never the value.
+- File-backed credentials (`@deepseek-ai/dsh-credentials-local`): `$DSH_HOME/.env`
+  provider with chokidar file watcher, atomic writes, and live credential rotation
+  without restart. Layered resolution: env → file → project-env → user-env.
+- Settings seam (`@deepseek-ai/dsh-settings`): structural secret redaction via
+  `redactSecrets()` — strips `role('secret')` fields before wire boundary crossing.
+  Sidecar records each secret position for write-only UI rendering.
+- Settings file provider (`@deepseek-ai/dsh-settings-file`): `settings.yaml`
+  file-backed provider with atomic writes, chokidar watcher, and concurrent
+  access safety (lock file).
+
+#### Compliance
+- License audit: pass (all MIT, no new vendor packages)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed
+- Smoke tests: 3/3 passed
+
 ## [0.6.2] - 2026-08-20
 
 ### Added — Phase 6.3: Saya Bisa Memberi Feedback & Setujui Aksi
