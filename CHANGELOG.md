@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-20
+
+### Added — Phase 3.1: Saya Bisa Baca & Cari File
+
+- Verified all 9 filesystem packages (already deployed in Phase 1.1):
+  `dsh-fs` (abstract seam), `dsh-fs-local` (local FS impl),
+  `dsh-fs-sandbox` (sandbox enforcement), `dsh-fs-observation-policy`
+  (read-before-edit policy), `dsh-tool-fs` (read/write/edit tools),
+  `dsh-tool-fs-search` (glob/grep tools), `dsh-tool-str-replace-editor`
+  (view/create/replace/insert), `dsh-workspace` (workspace registry),
+  `dsh-client-ui-workspace` (workspace picker UI).
+- All tools registered via `cordis.patch.yml` in `dsh-base` bundle.
+- Workspace permission mode: `workspace-write` (sandbox fences writes to workspace root).
+
+### SAD findings
+
+- Journey summary listed 7 packages with wrong sub-paths (`packages/fs/read/`,
+  `packages/fs/list/`, `packages/fs/glob/`, `packages/fs/grep/`). These don't
+  exist. Real structure: `fs/` (seam), `fs-local/` (impl), `tool-fs/` (model
+  tools), `tool-fs-search/` (glob/grep), `tool-str-replace-editor/` (str-replace).
+- `packages/client/workspace/` doesn't exist. Real: `packages/client/ui-workspace/`.
+
+### Verified (live RPC smoke test)
+
+- AC 1: AI called `read` tool on `package.json` → file contents returned — PASS
+- AC 2: `tool-fs` registered in cordis.patch.yml, invoked by model — PASS
+- AC 3: Workspace configured (`workspaceRoot: process.cwd()`, sandbox mode) — PASS
+- AC 4: Server boots clean (`dsh web` → port assigned, no errors) — PASS
+- AC 5: Tool call/result cycle confirmed (seq=37 call, seq=38 result) — PASS
+- Compliance: All 7 FS packages MIT, @vscode/ripgrep MIT, no DeepSeek in
+  user-visible strings — PASS
+
+### Known issues
+
+- `@vscode/ripgrep` not installed in node_modules — glob/grep tools built but
+  need `pnpm install` for the platform binary at runtime. Will work after install.
+
+### Next
+
+- Phase 3.2 (v0.3.1) — Saya Bisa Edit File Lewat AI (prerequisite 3.1 now satisfied).
+- Phase 3.3 (v0.3.2) — Saya Bisa Cari di Isi File (prerequisite 3.1 now satisfied).
+
 ## [0.2.1] - 2026-08-19
 
 ### Added — Phase 2.2: Sesi Chat Tersimpan

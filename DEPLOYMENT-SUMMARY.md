@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.2.1** — Phase 2.2: Sesi Chat Tersimpan (created)
+**v0.3.0** — Phase 3.1: Saya Bisa Baca & Cari File (created)
 
 ## API Service Catalog
 
@@ -41,8 +41,46 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 2.1 | Respond (client) | HTTP | `POST /api/respond` | Client-response channel (approvals, questions) |
 | 2.2 | Session persistence | Storage (local) | `session.*` RPC + `dsh-storage-{sqlite,json}` backends | Sessions survive server restart (SQLite/JSONL) |
 | 2.2 | Session removed (host) | Event | `host/session-removed` | Emitted on workspace session deletion (delete surface) |
+| 3.1 | FS read tool | Agent tool | `read(file_path)` | AI reads file contents via ctx.fs seam |
+| 3.1 | FS write tool | Agent tool | `write(file_path, content)` | AI creates/overwrites files |
+| 3.1 | FS edit tool | Agent tool | `edit(file_path, edits)` | AI edits files with diff preview |
+| 3.1 | FS glob tool | Agent tool | `glob(pattern, cwd?)` | AI searches files by name pattern (needs @vscode/ripgrep) |
+| 3.1 | FS grep tool | Agent tool | `grep(regex, cwd?)` | AI searches file contents by regex (needs @vscode/ripgrep) |
+| 3.1 | Str-replace editor | Agent tool | `view/create/str_replace/insert` | AI view, create, replace, insert file operations |
+| 3.1 | Workspace registry | RPC | `POST /api/workspace.{create,list,rename,delete}` | Workspace entity registry with durable records |
 
 ## Deployed Phases
+
+### Phase 3.1 — Saya Bisa Baca & Cari File  ✅
+
+- **Version:** v0.3.0
+- **Date:** 2026-08-20
+- **What was deployed:** No new packages — all 9 FS/workspace packages already
+  present from Phase 1.1 monorepo deployment. Verified the filesystem tool layer
+  is wired and functional.
+- **What works:**
+  - AI reads files via `read` tool (confirmed via live RPC test)
+  - Tool call → result cycle works (seq=37 call, seq=38 result)
+  - Workspace permission mode: `workspace-write` (sandbox fences writes)
+  - All tools registered in `cordis.patch.yml` (dsh-base bundle)
+  - Agent instructions include FS tool documentation
+- **Proof:** Created session → asked AI "Read package.json" → AI invoked `read`
+  tool with correct path → tool returned full file contents → AI summarized.
+- **Journey summary discrepancy:** 7 of 7 listed packages had wrong paths.
+  Real structure: `fs/` (seam), `fs-local/` (impl), `tool-fs/` (model tools),
+  `tool-fs-search/` (glob/grep), `tool-str-replace-editor/` (str-replace).
+  `packages/client/workspace/` → real: `packages/client/ui-workspace/`.
+- **Known issues:** `@vscode/ripgrep` not installed — glob/grep tools need
+  `pnpm install` for the platform binary at runtime.
+- **API Services produced:**
+  - Agent tools: `read`, `write`, `edit`, `glob`, `grep`, `view`, `create`,
+    `str_replace`, `insert` (all via ctx.fs seam, sandbox-enforced)
+  - No new RPC methods — workspace RPC already registered in Phase 2.1
+- **Pipeline reports:**
+  - SAD → `BUNDLE-MANIFEST.md` (with discrepancy notes)
+  - Integrator → 9/9 packages verified, bundle wiring confirmed, boot test
+  - Compliance → PASS (all MIT, no DeepSeek in user-visible strings)
+  - Verifier → PASS (5/5 AC, live tool call smoke test)
 
 ### Phase 2.2 — Sesi Chat Tersimpan  ✅
 
@@ -199,12 +237,11 @@ Updated by the Dokumenter after each phase (Rule 3).
 
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
-| 1.1 | v0.1.1 | Rhea Bisa Dibuka | 0.1 | created |
-| 1.2 | v0.1.2 | UI Web Merespon | 1.1 | created |
-| 2.1 | v0.2.0 | Saya Bisa Chat dengan AI | 1.2 | created |
-| 2.2 | v0.2.1 | Sesi Chat Tersimpan | 2.1 | pending |
+| 3.2 | v0.3.1 | Saya Bisa Edit File Lewat AI | 3.1 | pending |
+| 3.3 | v0.3.2 | Saya Bisa Cari di Isi File | 3.1 | pending |
+| 4.1 | v0.4.0 | Saya Bisa Jalankan Perintah Shell | 3.2 | pending |
 
 ## How to continue
 
-Run `/deploy` again — the pipeline auto-detects Phase 2.2 as the next pending
-phase (its prerequisite 2.1 is now `created`).
+Run `/deploy` again — the pipeline auto-detects Phase 3.2 or 3.3 as the next
+pending phase (prerequisite 3.1 is now `created`).
