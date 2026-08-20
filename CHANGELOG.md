@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.3] - 2026-08-20
+
+### Added — Phase 5.4: Saya Bisa Menentukan Tujuan & Rencana
+
+- Goal lifecycle service (`@deepseek-ai/dsh-goal`): event-sourced same-session
+  goal state and lifecycle with fold/projection (`goal: GoalProjection`).
+- Command goal (`@deepseek-ai/dsh-command-goal`): human-facing `/goal` slash
+  command for persisted same-session goals.
+- Goal round driver (`@deepseek-ai/dsh-goal-round-driver`): race-fenced
+  same-session goal-round execution driver.
+- Tool goal (`@deepseek-ai/dsh-tool-goal`): model-facing same-session goal
+  tools with execution-time authority checks.
+- Plan mode (`@deepseek-ai/dsh-plan-mode`): logged per-agent plan mode with
+  deployment guidance, `/plan` slash command, and user-reviewed exit. Session
+  projection key `plan: PlanProjection`.
+- Plan UI (`@deepseek-ai/dsh-client-ui-plan`): plan-mode status chip
+  (conversation.input.plan seat) for browser surface.
+- Todo tool (`@deepseek-ai/dsh-tool-todo`): already deployed in Phase 5.2,
+  verified as plan execution backbone.
+
+#### Compliance
+- License audit: pass
+- Branding check: pass (no DeepSeek in user-visible strings)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed
+- Smoke tests: 3/3 passed (build, typecheck, 261 unit tests across 18 files)
+
 ## [0.5.2] - 2026-08-20
 
 ### Added — Phase 5.3: Saya Bisa Bikin Sub-Agent

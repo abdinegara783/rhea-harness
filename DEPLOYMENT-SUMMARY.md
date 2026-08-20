@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.5.2** — Phase 5.3: Saya Bisa Bikin Sub-Agent (created)
+**v0.5.3** — Phase 5.4: Saya Bisa Menentukan Tujuan & Rencana (created)
 
 ## API Service Catalog
 
@@ -74,8 +74,65 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 5.3 | Subagent registry | Agent seam | `ctx.subagents` | Named-provider registry for delegating to child agents |
 | 5.3 | Subagent list (RPC) | RPC | `POST /api/subagent.list` | List available sub-agent providers (already cataloged in 2.1, now verified with UI) |
 | 5.3 | Skill registry | Agent seam | `ctx.skills` | Skill provider registry for loading SKILL.md capabilities |
+| 5.4 | Goal lifecycle | Session projection | `goal: GoalProjection` | Event-sourced goal state (fold from goal events) |
+| 5.4 | `/goal` command | CLI command | `/goal` | Human-facing slash command for persisted goals |
+| 5.4 | Goal tools | Agent tool | `goal_*` (with authority checks) | Model-facing same-session goal tools (dsh-tool-goal) |
+| 5.4 | Goal round driver | Agent seam | Race-fenced rounds | dsh-goal-round-driver for execution rounds |
+| 5.4 | Plan mode | Session projection | `plan: PlanProjection` | Plan collaboration state (fold from command/run + plan/mode events) |
+| 5.4 | `/plan` command | CLI command | `/plan`, `/plan off` | Enter/exit plan mode (dsh-plan-mode) |
+| 5.4 | Plan exit tool | Agent tool | `plan_exit` | Model-facing tool to leave plan mode (stays registered across transitions) |
+| 5.4 | Plan UI chip | Client seat | `conversation.input.plan` | Browser-surface plan-mode status badge (single-instance seat) |
 
 ## Deployed Phases
+
+### Phase 5.4 — Saya Bisa Menentukan Tujuan & Rencana  ✅
+
+- **Version:** v0.5.3
+- **Date:** 2026-08-20
+- **What was deployed:** 7 packages verified and built:
+  - `@deepseek-ai/dsh-goal` (packages/goal/goal/) — event-sourced same-session
+    goal state and lifecycle service with fold/projection.
+  - `@deepseek-ai/dsh-command-goal` (packages/goal/command-goal/) — human-facing
+    `/goal` slash command for persisted same-session goals.
+  - `@deepseek-ai/dsh-goal-round-driver` (packages/goal/goal-round-driver/) —
+    race-fenced same-session goal-round execution driver.
+  - `@deepseek-ai/dsh-tool-goal` (packages/goal/tool-goal/) — model-facing
+    same-session goal tools with execution-time authority checks.
+  - `@deepseek-ai/dsh-plan-mode` (packages/plan/plan-mode/) — logged per-agent
+    plan mode with deployment guidance, `/plan` command, user-reviewed exit.
+  - `@deepseek-ai/dsh-tool-todo` (packages/todo/tool-todo/) — already deployed
+    in Phase 5.2, verified as plan execution backbone.
+  - `@deepseek-ai/dsh-client-ui-plan` (packages/client/ui-plan/) — plan-mode
+    status chip (conversation.input.plan seat) for browser surface.
+- **What works:**
+  - AI creates goals/plans for complex objectives via goal lifecycle service
+  - Sequential step-by-step execution with plan mode
+  - Plan adjustment on failure (retry/skip/revise)
+  - `/plan` slash command to enter/exit plan mode
+  - `/goal` slash command to manage goals
+  - Plan projection (`plan: PlanProjection`) tracks plan state in session
+  - Goal projection (`goal: GoalProjection`) tracks goal state in session
+  - Plan UI chip shows plan-mode status in browser
+  - Goal tools have execution-time authority checks
+  - Goal round driver handles race-fenced execution rounds
+- **Proof:** Build (host + client) success. Typecheck pass. 261/261 unit tests
+  passed across 18 test files (0 failed). All 7 package build artifacts present.
+- **Compliance:** LICENSE pass, THIRD_PARTY_NOTICES pass, vendor LICENSE intact,
+  no DeepSeek in UI strings.
+- **API Services produced:**
+  - Session projection: `goal: GoalProjection` (event-sourced goal state)
+  - Session projection: `plan: PlanProjection` (plan collaboration state)
+  - Agent tool: `goal_*` with authority checks (dsh-tool-goal)
+  - Agent tool: `plan_exit` (model-facing plan mode exit)
+  - CLI command: `/goal` (human-facing goal management)
+  - CLI command: `/plan`, `/plan off` (plan mode enter/exit)
+  - Client seat: `conversation.input.plan` (plan-mode status chip)
+  - Agent seam: goal round driver (race-fenced execution)
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (7 packages, all exist, Phase 5.2 dep satisfied)
+  - Integrator → build success, 261/261 tests passed, typecheck pass
+  - Compliance → PASS (all MIT, no new vendor packages)
+  - Verifier → PASS (8/8 tests: 5 AC + 3 smoke)
 
 ### Phase 5.2 — Daftar Tugas & Todo Agent  ✅
 
