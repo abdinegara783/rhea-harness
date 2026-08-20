@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.7.1** — Phase 7.2: AI Bisa Cari di Internet (created)
+**v0.8.0** — Phase 8.1: AI Bisa Jalankan Kode dengan Aman (created)
 
 ## API Service Catalog
 
@@ -98,8 +98,64 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 7.2 | Exa search provider | Provider | `ExaSearchProvider` | Exa-backed neural/keyword search with highlights |
 | 7.2 | Perplexity search provider | Provider | `PerplexitySearchProvider` | Perplexity-backed search with model selection |
 | 7.2 | web_search (enhanced) | Agent tool | `web_search(query)` | Now dispatches to registered search provider (DeepSeek/Exa/Perplexity) |
+| 8.1 | Code runtime | Agent seam | `ctx.codeRuntime` | Abstract code-execution seam (CodeRuntime class, reserved-words vocabulary) |
+| 8.1 | Worker-thread code runtime | Provider | `WorkerThreadCodeRuntime` | Worker-thread-backed code execution with bounded output |
+| 8.1 | Sandbox seam | Agent seam | `ctx.sandbox` | Abstract process-sandbox seam (SandboxProvider contract, escalation, denial markers) |
+| 8.1 | Local sandbox | Provider | `LocalSandboxProvider` | bwrap/Seatbelt/Landlock/Windows ACL, probed fail-closed |
+| 8.1 | Subprocess seam | Agent seam | `ctx.subprocess` | Abstract subprocess seam (managed process groups, bounded output, escalated kills) |
+| 8.1 | Local subprocess | Provider | `LocalSubprocessRuntime` | Local subprocess with node-pty for interactive terminal sessions |
+| 8.1 | Sensitive env scrubbing | Policy | `SENSITIVE_ENV_PATTERN` | Parent env vars matching sensitive patterns are scrubbed from child processes |
 
 ## Deployed Phases
+
+### Phase 8.1 — AI Bisa Jalankan Kode dengan Aman  ✅
+
+- **Version:** v0.8.0
+- **Date:** 2026-08-20
+- **What was deployed:** 6 packages verified and built:
+  - `@deepseek-ai/dsh-code-runtime` (packages/code-runtime/code-runtime/)
+    — Abstract code-execution seam (`ctx.codeRuntime`). `CodeRuntime` class
+    with reserved-words vocabulary and portable binding globals.
+  - `@deepseek-ai/dsh-code-runtime-worker-thread` (packages/code-runtime/code-runtime-worker-thread/)
+    — Worker-thread-backed implementation. `WorkerThreadCodeRuntime` class
+    with bounded output and timeout support.
+  - `@deepseek-ai/dsh-sandbox` (packages/sandbox/sandbox/)
+    — Abstract process-sandbox seam (`ctx.sandbox`). `SandboxProvider`
+    contract, `SandboxUnavailableError`, escalation vocabulary, denial
+    markers, writable-roots policy.
+  - `@deepseek-ai/dsh-sandbox-local` (packages/sandbox/sandbox-local/)
+    — `LocalSandboxProvider` — bwrap, macOS Seatbelt, Landlock, or Windows
+    ACL restricted-token runner, probed fail-closed.
+  - `@deepseek-ai/dsh-subprocess` (packages/subprocess/subprocess/)
+    — Abstract subprocess seam (`ctx.subprocess`). `SubprocessRuntime` class
+    with managed process groups, bounded spill-backed output, escalated
+    kills, and sensitive-env scrubbing.
+  - `@deepseek-ai/dsh-subprocess-local` (packages/subprocess/subprocess-local/)
+    — `LocalSubprocessRuntime` — local-subprocess implementation with node-pty
+    support for interactive terminal sessions.
+- **What works:**
+  - All 6 packages build via TypeScript project references (tsc -b + tsdown)
+  - All packages load at runtime and export correct classes
+  - Sandbox provides fail-closed isolation (bwrap/Seatbelt/Landlock/ACL)
+  - Subprocess provides managed process groups with bounded output
+  - Code runtime provides worker-thread execution with timeout
+  - Sensitive environment variables scrubbed from child processes
+- **Proof:** Build artifacts present for all 6 packages. Typecheck pass
+  (0 errors). All packages export correct provider classes. No broken imports.
+- **Compliance:** LICENSE pass, THIRD_PARTY_NOTICES pass, vendor LICENSE
+  intact, zero "DeepSeek" in user-visible UI strings.
+- **API Services produced:**
+  - Seam: `ctx.codeRuntime` — abstract code-execution (CodeRuntime class)
+  - Provider: `WorkerThreadCodeRuntime` — worker-thread code execution
+  - Seam: `ctx.sandbox` — abstract process-sandbox (SandboxProvider contract)
+  - Provider: `LocalSandboxProvider` — bwrap/Seatbelt/Landlock/ACL
+  - Seam: `ctx.subprocess` — abstract subprocess (SubprocessRuntime class)
+  - Provider: `LocalSubprocessRuntime` — local subprocess with node-pty
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (6 packages, Phase 4.1 dep satisfied)
+  - Integrator → build success, typecheck pass, 13234/13512 tests passed (pre-existing failures)
+  - Compliance → PASS (all MIT, branding clean)
+  - Verifier → PASS (8/8 tests passed, all packages load correctly)
 
 ### Phase 7.2 — AI Bisa Cari di Internet  ✅
 

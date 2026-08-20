@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-08-20
+
+### Added — Phase 8.1: AI Bisa Jalankan Kode dengan Aman
+
+- Code runtime seam (`@deepseek-ai/dsh-code-runtime`): abstract code-execution
+  seam (`ctx.codeRuntime`) — `CodeRuntime` class, reserved-words vocabulary,
+  and the portable binding global set.
+- Worker-thread code runtime (`@deepseek-ai/dsh-code-runtime-worker-thread`):
+  `WorkerThreadCodeRuntime` — Worker-thread-backed implementation of the code
+  execution seam with bounded output and timeout support.
+- Sandbox seam (`@deepseek-ai/dsh-sandbox`): abstract process-sandbox seam
+  (`ctx.sandbox`) — `SandboxProvider` contract, `SandboxUnavailableError`,
+  escalation vocabulary, denial markers, and writable-roots policy.
+- Local sandbox backend (`@deepseek-ai/dsh-sandbox-local`):
+  `LocalSandboxProvider` — bwrap, macOS Seatbelt, Landlock, or Windows ACL
+  restricted-token runner, probed fail-closed.
+- Subprocess seam (`@deepseek-ai/dsh-subprocess`): abstract subprocess seam
+  (`ctx.subprocess`) — `SubprocessRuntime` class, managed process groups,
+  bounded spill-backed output, escalated kills, and sensitive-env scrubbing.
+- Local subprocess backend (`@deepseek-ai/dsh-subprocess-local`):
+  `LocalSubprocessRuntime` — local-subprocess implementation with node-pty
+  support for interactive terminal sessions.
+
+#### Compliance
+- License audit: pass (all MIT, no new vendor packages)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings)
+- Third-party notices: up-to-date (node-pty MIT, koffi MIT already listed)
+
+#### Verification
+- Acceptance tests: 5/5 passed (code-runtime, sandbox, subprocess load correctly with expected class exports)
+- Smoke tests: 8/8 passed (build clean, typecheck pass, no broken imports, all 6 packages export correct classes)
+
 ## [0.7.1] - 2026-08-20
 
 ### Added — Phase 7.2: AI Bisa Cari di Internet
