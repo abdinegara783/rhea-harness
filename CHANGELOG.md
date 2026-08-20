@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-08-20
+
+### Added — Phase 3.3: Saya Bisa Cari di Isi File
+
+- Verified `dsh-tool-fs-search` package (already deployed in Phase 1.1):
+  glob + grep tools backed by ripgrep 15.0.0.
+- `@vscode/ripgrep` runtime dependency installed (darwin-arm64 binary).
+- Tool registered in cordis.patch.yml as `tool-fs-search`.
+
+### SAD findings
+
+- Journey summary listed 4 packages, ALL with wrong paths:
+  `packages/fs/grep/`, `packages/fs/glob/`, `packages/client/search/`,
+  `packages/client/ui-search-results/` — none exist.
+  Real: single package `packages/fs/tool-fs-search/`.
+
+### Verified (live RPC smoke test)
+
+- AC1: grep("TODO", "*.ts") → 2 matches: bug.ts:1, util.ts:1 (with line + snippet)
+- AC2: Regex support via ripgrep PCRE2
+- AC3: Results include filename, line number, match snippet (structured view)
+- AC4: glob("**/*.ts") → 4 files found (app.ts, bug.ts, util.ts, src/index.ts)
+- AC5: Both tool calls completed in <50ms
+
 ## [0.3.1] - 2026-08-20
 
 ### Added — Phase 3.2: Saya Bisa Edit File Lewat AI

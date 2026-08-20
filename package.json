@@ -181,6 +181,7 @@
     "vitest": "^4.1.8"
   },
   "dependencies": {
+    "@vscode/ripgrep": "^1.18.0",
     "zod": "^4.4.3"
   }
 }

@@ -1,66 +1,77 @@
-# Bundle Manifest — Phase 3.2
+# Bundle Manifest — Phase 3.3
 
-## Phase
+```yaml
+phase: "3.3"
+version: "v0.3.2"
+tagline: "Saya Bisa Cari di Isi File"
+features:
+  - id: "3.3-1"
+    description: "Cari kata/frasa di seluruh project menggunakan grep tool"
+    packages:
+      - name: "@deepseek-ai/dsh-tool-fs-search"
+        path: "packages/fs/tool-fs-search/"
+        exists: true
+        build_cmd: "pre-built lib/ present"
+        role: "Provides glob and grep model-facing tools backed by @vscode/ripgrep"
+  - id: "3.3-2"
+    description: "Hasil pencarian: nama file, nomor baris, cuplikan kode"
+    packages:
+      - name: "@vscode/ripgrep"
+        path: "node_modules/@vscode/ripgrep/"
+        exists: true
+        build_cmd: "npm binary dependency"
+        role: "Packaged ripgrep binary that powers glob/grep tool execution"
+  - id: "3.3-3"
+    description: "Regex support untuk pencarian konten file"
+    packages:
+      - name: "@deepseek-ai/dsh-tool-fs-search"
+        path: "packages/fs/tool-fs-search/"
+        exists: true
+        build_cmd: "pre-built lib/ present"
+        role: "grep tool accepts regex patterns, spawns rg with --json output"
+  - id: "3.3-4"
+    description: "Batasi pencarian ke folder tertentu"
+    packages:
+      - name: "@deepseek-ai/dsh-tool-fs-search"
+        path: "packages/fs/tool-fs-search/"
+        exists: true
+        build_cmd: "pre-built lib/ present"
+        role: "glob/grep tools accept optional path parameter as search root"
+dependencies:
+  - phase: "3.1"
+    tracker_status: "created"
+    status: "satisfied"
+acceptance_criteria:
+  - "'cari function di *.ts' → hasil dengan baris & cuplikan"
+  - "Regex 'TODO:.*' → semua TODO comments ditemukan"
+  - "Hasil: nama file, nomor baris, highlight cuplikan"
+  - "Batasi ke src/ → hanya file di src/ yang muncul"
+  - "Cepat untuk ratusan file"
+compliance_notes:
+  - "ripgrep — MIT/Unlicensed. Cek ReDoS (regex denial of service)."
+  - "@vscode/ripgrep ships binary — verify license in node_modules."
+risk_assessment:
+  level: "low"
+  factors:
+    - "Package already deployed in Phase 3.1 — just verifying search works"
+    - "@vscode/ripgrep binary now installed (was noted missing in Phase 3.1)"
+    - "No new code changes — verification-only phase"
+```
 
-- **Phase:** 3.2
-- **Version:** v0.3.1
-- **Tagline:** Saya Bisa Edit File Lewat AI
-- **Date:** 2026-08-20
+## SAD Findings — Journey Summary Discrepancy
 
-## Features
+The journey summary listed 4 packages for Phase 3.3, **all with wrong paths**:
 
-| ID | Description |
+| Journey Summary | Real Package |
 |---|---|
-| F1 | AI can replace text in a file (str_replace) |
-| F2 | AI can insert lines at a specific position |
-| F3 | AI can create new files |
-| F4 | Read-before-edit policy enforced (observation policy) |
-| F5 | Write operations sandbox-fenced to workspace root |
-| F6 | User approval required for file mutations |
+| `@deepseek-ai/dsh-fs-grep` at `packages/fs/grep/` | `@deepseek-ai/dsh-tool-fs-search` at `packages/fs/tool-fs-search/` |
+| `@deepseek-ai/dsh-fs-glob` at `packages/fs/glob/` | Same package — `tool-fs-search` provides BOTH glob and grep |
+| `@deepseek-ai/dsh-client-search` at `packages/client/search/` | Does not exist as separate package — search results rendered in `ui-conversation` |
+| `@deepseek-ai/dsh-client-ui-search-results` at `packages/client/ui-search-results/` | Does not exist — search results displayed inline in chat |
 
-## Packages
+## Package Verification
 
-| Package | Path | Role |
-|---|---|---|
-| @deepseek-ai/dsh-tool-fs | packages/fs/tool-fs/ | Model-facing write/edit tools over ctx.fs |
-| @deepseek-ai/dsh-tool-str-replace-editor | packages/fs/tool-str-replace-editor/ | Model-facing str_replace/insert/view/create tools |
-| @deepseek-ai/dsh-fs-observation-policy | packages/fs/fs-observation-policy/ | Read-before-edit + version-guarded write policy |
-| @deepseek-ai/dsh-fs-sandbox | packages/fs/fs-sandbox/ | Sandbox-enforced write fences (workspace-write mode) |
-| @deepseek-ai/dsh-user-approval | packages/interaction/user-approval/ | Permission decisions (ask before file mutations) |
-| @deepseek-ai/dsh-repeat-tool-reminder | packages/guard/repeat-tool-reminder/ | Guard against repeated identical tool calls |
-| @deepseek-ai/dsh-tool-call-timeout-policy | packages/guard/timeout-policy/ | Timeout enforcement for tool calls |
-
-## Dependencies
-
-| Phase | Status |
-|---|---|
-| 3.1 (Saya Bisa Baca & Cari File) | satisfied ✅ |
-
-## Acceptance Criteria
-
-1. "ubah README.md baris pertama" → AI shows diff
-2. Accept → changes applied
-3. Reject → cancelled
-4. "buat file baru.txt" → file created
-5. Edit does not corrupt other files
-
-## Compliance Notes
-
-- All packages MIT licensed
-- User-approval seam is fail-closed by default (secure)
-- Sandbox fences writes to workspace root (no escape)
-- Observation policy ensures read-before-edit (audit trail)
-
-## Journey Summary Discrepancy
-
-Journey summary listed 6 packages with wrong paths:
-- `packages/fs/write/` → doesn't exist. Write/edit is in `packages/fs/tool-fs/`
-- `packages/fs/edit/` → doesn't exist. Edit is in `packages/fs/tool-fs/`
-- `packages/fs/patch/` → doesn't exist. Patch is in `packages/fs/tool-str-replace-editor/`
-- `packages/client/ui-diff/` → doesn't exist. No separate diff UI package
-- `packages/guard/` → exists but has `repeat-tool-reminder/` and `timeout-policy/`
-- `packages/client/ui-approval/` → doesn't exist. Real: `packages/interaction/user-approval/`
-
-Real edit packages: tool-fs (write/edit), tool-str-replace-editor (str_replace/insert),
-fs-observation-policy (read-before-edit), fs-sandbox (write fences),
-user-approval (permission decisions), guard/* (tool guards).
+- `packages/fs/tool-fs-search/` ✅ exists, `lib/index.js` built
+- `node_modules/@vscode/ripgrep/` ✅ exists (binary installed)
+- `cordis.patch.yml` (base bundle) ✅ registers `tool-fs-search` plugin
+- Tool config: `sampleOverCapGlobResults: false`, `globMaxResults: 100`, `grepMaxMatches: 250`

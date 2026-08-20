@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.3.1** — Phase 3.2: Saya Bisa Edit File Lewat AI (created)
+**v0.3.2** — Phase 3.3: Saya Bisa Cari di Isi File (created)
 
 ## API Service Catalog
 
@@ -52,8 +52,40 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 3.2 | FS edit tool | Agent tool | `edit(file_path, old_string, new_string)` | AI replaces text in files with diff (confirmed: "Hello"→"Greetings") |
 | 3.2 | Observation policy | Policy | read-before-edit enforced | AI must read file before editing (audit trail) |
 | 3.2 | User approval | Policy | `ctx.approval` fail-closed | Permission seam for file mutations (ask policy) |
+| 3.3 | FS grep tool (verified) | Agent tool | `grep(pattern, include?, cwd?)` | AI searches file contents by regex (confirmed: TODO search in *.ts) |
+| 3.3 | FS glob tool (verified) | Agent tool | `glob(pattern, cwd?)` | AI finds files by name pattern (confirmed: **/*.ts → 4 files) |
+| 3.3 | ripgrep runtime | Dep | `@vscode/ripgrep` 15.0.0 | Platform binary installed (darwin-arm64), PCRE2 enabled |
 
 ## Deployed Phases
+
+### Phase 3.3 — Saya Bisa Cari di Isi File  ✅
+
+- **Version:** v0.3.2
+- **Date:** 2026-08-20
+- **What was deployed:** No new packages — `dsh-tool-fs-search` already present
+  from Phase 1.1. Installed `@vscode/ripgrep` runtime dependency (platform binary).
+  Verified glob + grep tools work end-to-end.
+- **What works:**
+  - AI searches file contents via `grep` tool (confirmed: TODO search in *.ts)
+  - AI finds files via `glob` tool (confirmed: **/*.ts → 4 files)
+  - Results include filename, line number, match snippet
+  - ripgrep 15.0.0 with PCRE2 support
+  - Both tool calls completed in <50ms
+- **Proof:** Created session → "Search for TODO in *.ts" → AI called `grep` (seq=54)
+  → 2 matches returned (bug.ts:1, util.ts:1). Then `glob("**/*.ts")` (seq=56)
+  → 4 files found. Structured views confirmed (card: "search", shape: "matches").
+- **Journey summary discrepancy:** All 4 listed packages had wrong paths.
+  `packages/fs/grep/`, `packages/fs/glob/`, `packages/client/search/`,
+  `packages/client/ui-search-results/` — none exist.
+  Real: single package `packages/fs/tool-fs-search/`.
+- **API Services produced:**
+  - Agent tools: `grep` (content search), `glob` (file discovery)
+  - Runtime dep: `@vscode/ripgrep` 15.0.0 (darwin-arm64, PCRE2)
+- **Pipeline reports:**
+  - SAD → `BUNDLE-MANIFEST.md`
+  - Integrator → 1/1 package verified, cordis wired
+  - Compliance → PASS (MIT, ripgrep MIT/Unlicensed)
+  - Verifier → PASS (5/5 AC, live grep+glob smoke test)
 
 ### Phase 3.2 — Saya Bisa Edit File Lewat AI  ✅
 
