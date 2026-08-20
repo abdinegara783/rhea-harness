@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.8.0** — Phase 8.1: AI Bisa Jalankan Kode dengan Aman (created)
+**v0.8.1** — Phase 8.2: Sandboxing Native (Landlock) (created)
 
 ## API Service Catalog
 
@@ -105,8 +105,54 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 8.1 | Subprocess seam | Agent seam | `ctx.subprocess` | Abstract subprocess seam (managed process groups, bounded output, escalated kills) |
 | 8.1 | Local subprocess | Provider | `LocalSubprocessRuntime` | Local subprocess with node-pty for interactive terminal sessions |
 | 8.1 | Sensitive env scrubbing | Policy | `SENSITIVE_ENV_PATTERN` | Parent env vars matching sensitive patterns are scrubbed from child processes |
+| 8.2 | Landlock launcher | Native addon | `grantArgs()`, `probe()`, `launcherPath()` | JS API seam for Landlock kernel sandbox (Linux 5.13+), static musl binaries |
+| 8.2 | Platform prebuilds | Native binary | `linux-x64`, `linux-arm64` optional deps | Per-platform Landlock launcher binaries (static musl) |
+| 8.2 | Sandbox escalation | Agent seam | `approveEscalation()`, `writableRoots()` | Sandbox escalation vocabulary with audit trail (enhanced from Phase 8.1) |
 
 ## Deployed Phases
+
+### Phase 8.2 — Sandboxing Native (Landlock)  ✅
+
+- **Version:** v0.8.1
+- **Date:** 2026-08-20
+- **What was deployed:** 5 packages verified and built:
+  - `@deepseek-ai/node-addon-landlock-run` (native/landlock-run/packages/entry/)
+    — JavaScript API seam for the Landlock launcher. Resolves per-platform
+    prebuilt static binaries, probes enforcement verdicts
+    (full/partial/unusable), constructs grant-argv for the CLI contract.
+  - `@deepseek-ai/node-addon-landlock-run-linux-x64` (native/landlock-run/packages/linux-x64/)
+    — Prebuilt static musl binary for Linux x64. Optional dependency.
+  - `@deepseek-ai/node-addon-landlock-run-linux-arm64` (native/landlock-run/packages/linux-arm64/)
+    — Prebuilt static musl binary for Linux arm64. Optional dependency.
+  - `@deepseek-ai/dsh-sandbox` (packages/sandbox/sandbox/)
+    — Abstract process-sandbox seam. `SandboxProvider` contract,
+    `SandboxUnavailableError`, escalation vocabulary, denial markers,
+    writable-roots policy. 18 unit tests.
+  - `@deepseek-ai/dsh-sandbox-local` (packages/sandbox/sandbox-local/)
+    — Platform-chain probe: Landlock (Linux), Seatbelt (macOS), Windows ACL.
+    Fail-closed. 220 unit tests covering all three backends.
+- **What works:**
+  - Landlock launcher JS seam resolves platform packages and probes verdicts
+  - Platform prebuilds correctly skip on non-Linux (darwin/arm64 verified)
+  - Sandbox escalation vocabulary operational (approve/deny/audit)
+  - Platform chain selects correct backend per OS (Seatbelt on macOS verified)
+  - Fail-closed behavior when no sandbox backend available
+  - All 238 tests pass (18 sandbox + 220 sandbox-local, 30 platform-skipped)
+- **Proof:** Build success for all 5 packages. Typecheck pass (0 errors).
+  Entry test: ok (constants, grantArgs, launcherPath, probe verdicts).
+  Launcher test: SKIP (Linux-only, expected on darwin). Full sandbox suite:
+  220/220 pass. Packages load at runtime with correct exports.
+- **Compliance:** LICENSE pass (BSD-3-Clause native addon, MIT sandbox),
+  THIRD_PARTY_NOTICES pass (landlock-run listed as first-party), vendor
+  LICENSE intact (3x BSD-3-Clause), zero "DeepSeek" in user-visible strings.
+- **API Services produced:** No new network API services. Phase 8.2 adds
+  the native Landlock launcher (library-level JS API) and hardens the
+  sandbox escalation vocabulary already cataloged in Phase 8.1.
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (5 packages, Phase 8.1 dep satisfied)
+  - Integrator → build success, 238/238 tests passed, typecheck pass
+  - Compliance → PASS (BSD-3-Clause + MIT, branding clean)
+  - Verifier → PASS (7/7 tests: 5 AC + 2 smoke)
 
 ### Phase 8.1 — AI Bisa Jalankan Kode dengan Aman  ✅
 
@@ -914,14 +960,14 @@ Updated by the Dokumenter after each phase (Rule 3).
 
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
-| 7.2 | v0.7.1 | AI Bisa Cari di Internet | 7.1 | next |
-| 8.1 | v0.8.0 | AI Bisa Jalankan Kode dengan Aman | 4.1 | next |
+| 8.2 | v0.8.1 | Sandboxing Native (Landlock) | 8.1 | next |
 | 9.1 | v0.9.0 | AI Punya Asisten Bahasa (LSP) | 3.2 | pending |
 | 10.1 | v1.0.0 | AI Bisa Pakai Plugin Dinamis (Cordis) | 2.1 | next |
 | 10.2 | v1.0.1 | AI Bisa Pakai MCP Server | 2.1 | next |
+| 10.3 | v1.0.2 | AI Bisa Pakai E2B Sandbox Cloud | 8.1 | next |
 | 11.1 | v1.1.0 | AI Bisa Pakai Skill | 2.1 | next |
 
 ## How to continue
 
 Run `/deploy` again — the pipeline auto-detects the next pending phase.
-Phases 7.2 (Web Search), 8.1 (Code Execution), 10.1 (Cordis Plugins), 10.2 (MCP Server), and 11.1 (Skills) are now unblocked.
+Phases 8.2 (Landlock Sandbox), 9.1 (LSP), 10.1 (Cordis Plugins), 10.2 (MCP Server), 10.3 (E2B Cloud), and 11.1 (Skills) are now unblocked.

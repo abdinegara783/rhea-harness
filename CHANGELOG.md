@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-08-20
+
+### Added — Phase 8.2: Sandboxing Native (Landlock)
+
+- Native Landlock launcher (`@deepseek-ai/node-addon-landlock-run`):
+  JavaScript API seam that resolves per-platform prebuilt static binaries,
+  probes the launcher for enforcement verdicts (full/partial/unusable),
+  and constructs grant-argv for the Landlock CLI contract.
+- Platform prebuilt packages (`@deepseek-ai/node-addon-landlock-run-linux-x64`,
+  `@deepseek-ai/node-addon-landlock-run-linux-arm64`): static musl binaries
+  for Linux x64 and arm64, resolved as optional dependencies.
+- Sandbox seam (`@deepseek-ai/dsh-sandbox`): abstract process-sandbox
+  vocabulary — `SandboxProvider` contract, escalation ladder, denial
+  markers, writable-roots policy. Verified with 18 unit tests.
+- Local sandbox backend (`@deepseek-ai/dsh-sandbox-local`): platform-chain
+  probe selecting Landlock (Linux), Seatbelt (macOS), or Windows ACL.
+  220 unit tests pass covering all three backends and fail-closed behavior.
+
+#### Compliance
+- License audit: pass (BSD-3-Clause for native addon, MIT for sandbox packages)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings)
+- Third-party notices: up-to-date (landlock-run listed as first-party BSD-3-Clause)
+
+#### Verification
+- Acceptance tests: 5/5 passed (Landlock probe contract, Seatbelt fallback on macOS, 220 sandbox tests)
+- Smoke tests: 7/7 passed (build clean, typecheck pass, packages load, entry test ok)
+
 ## [0.8.0] - 2026-08-20
 
 ### Added — Phase 8.1: AI Bisa Jalankan Kode dengan Aman
