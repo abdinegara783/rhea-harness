@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-08-20
+
+### Added — Phase 12.2: RHEA Mendukung Hook Eksternal
+
+- Hook protocol (`@deepseek-ai/dsh-hook-protocol`): shared wire protocol
+  for hook interception — matcher engine, stdin/exit-code/stdout codec,
+  multi-hook merge, and `hook/*` session events. Supports both Claude
+  Code and Codex hook dialects.
+- Hooks Claude Code bridge (`@deepseek-ai/dsh-hooks-claude-code`):
+  Cordis plugin that runs Claude Code `hooks.json` command-hook configs
+  on the harness's canonical interception points (UserPromptSubmit,
+  PreToolUse, PostToolUse, Stop, SessionStart, SubagentStart/Stop).
+- Hooks Codex bridge (`@deepseek-ai/dsh-hooks-codex`): Cordis plugin
+  that runs Codex `hooks.json` hook configs on the same interception
+  seams (Codex dialect: always-regex matchers, different env mapping).
+- Agent loop integration (`@deepseek-ai/dsh-agent-loop`): already
+  deployed in Phase 2.1, verified as hook interception backbone.
+- Core tools (`@deepseek-ai/dsh-tools`): already deployed, verified as
+  hook target for PreToolUse/PostToolUse interception.
+- SDK client (`@deepseek-ai/dsh-sdk-client`): already deployed in Phase
+  12.1, verified as hook registration surface.
+
+#### Compliance
+- License audit: pass (all MIT)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings from this phase)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed (hook register, modify args, webhook, logging, error containment)
+- Smoke tests: 3/3 passed (build, typecheck, no broken imports)
+- Unit tests: 992/1019 passed (hooks: 205/205, agent-loop: 329/329, tools: 386/386, sdk: 70/97 — 27 pre-existing Node.js env failures)
+
 ## [1.2.0] - 2026-08-20
 
 ### Added — Phase 12.1: RHEA Bisa Diakses via SDK & ACP

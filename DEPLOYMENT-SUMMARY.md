@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v1.2.0** — Phase 12.1: RHEA Bisa Diakses via SDK & ACP (created)
+**v1.2.1** — Phase 12.2: RHEA Mendukung Hook Eksternal (created)
 
 ## API Service Catalog
 
@@ -154,6 +154,11 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 12.1 | ACP SDK dep | External dep | `@agentclientprotocol/sdk` 0.25.1 | Open ACP standard SDK (Apache-2.0) |
 | 12.1 | API Gateway | Typert Remote | `TypertGatewayService` | Client API endpoint and Typert Remote Host dispatcher |
 | 12.1 | API Remotes | BFF assembly | `createApiRemoteAgentResolver`, `inspectApiRemoteSession` | Remote BFF: agent/session lookup, event forwarding |
+| 12.2 | hook/invoked | Session event | `hook/invoked` (log-only) | Hook command ran (paired with hook/result by handlerId) |
+| 12.2 | hook/result | Session event | `hook/result` (log-only) | Hook outcome: decision, exitCode, stderrSummary |
+| 12.2 | Hook bridge (CC) | Cordis plugin | `@deepseek-ai/dsh-hooks-claude-code` | Claude Code hooks.json bridge (CC dialect) |
+| 12.2 | Hook bridge (Codex) | Cordis plugin | `@deepseek-ai/dsh-hooks-codex` | Codex hooks.json bridge (Codex dialect) |
+| 12.2 | Hook matcher engine | Internal | `matchesMatcher()` | Tool-name / session-source / agent_type matching (CC literal + Codex regex) |
 
 ## Deployed Phases
 
@@ -214,10 +219,59 @@ Updated by the Dokumenter after each phase (Rule 3).
   occur in the learn-harness source — pre-existing environment issue, not a code defect.
   Resolution: upgrade to Node.js v22.19.0+ or use `--experimental-strip-types`.
 
+### Phase 12.2 — RHEA Mendukung Hook Eksternal  ✅
+
+- **Version:** v1.2.1
+- **Date:** 2026-08-20
+- **What was deployed:** 6 packages verified and built:
+  - `@deepseek-ai/dsh-hook-protocol` (packages/hooks/hook-protocol/)
+    — Shared wire protocol for hook interception: matcher engine
+    (CC literal + Codex regex), stdin/exit-code/stdout codec,
+    multi-hook most-restrictive merge, and `hook/*` session events
+    (`hook/invoked`, `hook/result`). 83 unit tests.
+  - `@deepseek-ai/dsh-hooks-claude-code` (packages/hooks/hooks-claude-code/)
+    — Cordis bridge plugin: runs Claude Code `hooks.json` command-hook
+    configs on harness interception points (UserPromptSubmit,
+    PreToolUse, PostToolUse, Stop, SessionStart, SubagentStart/Stop).
+    CC dialect: literal matchers, CLAUDE_PLUGIN_ROOT substitution.
+  - `@deepseek-ai/dsh-hooks-codex` (packages/hooks/hooks-codex/)
+    — Cordis bridge plugin: runs Codex `hooks.json` hook configs on
+    the same interception seams. Codex dialect: always-regex matchers,
+    different env/payload mapping.
+  - `@deepseek-ai/dsh-sdk-client` (packages/sdk/client/)
+    — Already deployed in Phase 12.1, verified as hook registration
+    surface for external SDK consumers.
+  - `@deepseek-ai/dsh-agent-loop` (packages/core/agent-loop/)
+    — Already deployed in Phase 2.1, verified as hook interception
+    backbone (329 tests pass).
+  - `@deepseek-ai/dsh-tools` (packages/core/tools/)
+    — Already deployed, verified as hook target for PreToolUse/
+    PostToolUse interception (386 tests pass).
+- **Build status:** success (all 6 packages built, zero errors)
+- **Typecheck:** pass (host + client)
+- **Test results:** 992 passed, 27 failed (pre-existing Node.js env issue)
+- **API Services produced:**
+  | Service | Type | Endpoint / Method | Notes |
+  |---|---|---|---|
+  | hook/invoked | Session event | `hook/invoked` (log-only) | Hook command ran |
+  | hook/result | Session event | `hook/result` (log-only) | Hook outcome (decision, exitCode, stderrSummary) |
+  | Hook bridge (CC) | Cordis plugin | `@deepseek-ai/dsh-hooks-claude-code` | Claude Code hooks.json bridge |
+  | Hook bridge (Codex) | Cordis plugin | `@deepseek-ai/dsh-hooks-codex` | Codex hooks.json bridge |
+  | Hook matcher | Internal | `matchesMatcher()` | Tool-name/session-source/agent_type matching |
+
+#### Compliance
+- License audit: pass (all MIT)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings from this phase)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed (hook register, modify args, webhook, logging, error containment)
+- Smoke tests: 3/3 passed (build, typecheck, no broken imports)
+- Unit tests: 205/205 hooks, 329/329 agent-loop, 386/386 tools
+
 ### Next
 
-- Phase 12.2 (v1.2.1) — RHEA Mendukung Hook Eksternal (prereq 12.1 now satisfied).
-- Phase 12.3 (v1.2.2) — RHEA Bisa Diakses via CLI Headless (prereq 12.1 now satisfied).
+- Phase 12.3 (v1.2.2) — RHEA Bisa Diakses via CLI Headless (prereq 12.1 satisfied).
 
 ### Phase 11.1 — AI Bisa Pakai Skill  ✅
 
