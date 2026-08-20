@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.6.1** — Phase 6.2: Saya Bisa Ganti Pengaturan Aplikasi (created)
+**v0.6.2** — Phase 6.3: Saya Bisa Memberi Feedback & Setujui Aksi (created)
 
 ## API Service Catalog
 
@@ -86,8 +86,62 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 6.1 | Model catalog | RPC | `POST /api/session.models` | Provider-grouped model directory with reasoning effort metadata (enhanced from Phase 2.1) |
 | 6.1 | Model picker UI | Client seat | `conversation.input.model` | Two-level Model/Effort menu in composer (ModelSelect component) |
 | 6.1 | `/model` command | CLI command | `/model` | popupSelect for model switching in chat |
+| 6.3 | Permission preset | Session event | `permission/preset` | Switch approval policy (ask/never) + sandbox mode via preset |
+| 6.3 | `/feedback` command | CLI command | `/feedback` | Record session feedback (log-only, anonymous user ID) |
+| 6.3 | Message feedback rating | Host Remote | `messageFeedback.rate/toggle` | Per-message thumbs up/down with optional note |
+| 6.3 | User questions | Agent seam | `ctx.userQuestions` | Abstract seam for agent-to-human questions during runs |
 
 ## Deployed Phases
+
+### Phase 6.3 — Saya Bisa Memberi Feedback & Setujui Aksi  ✅
+
+- **Version:** v0.6.2
+- **Date:** 2026-08-20
+- **What was deployed:** 10 packages verified and built:
+  - `@deepseek-ai/dsh-command-feedback` (packages/feedback/command-feedback/)
+    — log-only session feedback producer and `/feedback` slash command.
+  - `@deepseek-ai/dsh-message-feedback` (packages/feedback/message-feedback/)
+    — per-message rating (up/down) with optional note sidecar, persisted.
+  - `@deepseek-ai/dsh-user-approval` (packages/interaction/user-approval/)
+    — one-shot permission decisions (allowed-once/rejected/cancelled),
+    fail-closed. Session-scoped policy (`ask` | `never`).
+  - `@deepseek-ai/dsh-permission-presets` (packages/interaction/permission-presets/)
+    — user-facing presets bundling sandbox-mode + approval-policy knobs.
+  - `@deepseek-ai/dsh-tool-ask-user` (packages/interaction/tool-ask-user/)
+    — model-facing `ask_user_question` tool over `ctx.userQuestions` seam.
+  - `@deepseek-ai/dsh-user-questions` (packages/interaction/user-questions/)
+    — abstract user-questions seam for agent-to-human questions.
+  - `@deepseek-ai/dsh-commands` (packages/interaction/commands/)
+    — plugin-owned human command registry with brand seam.
+  - `@deepseek-ai/dsh-repeat-tool-reminder` (packages/guard/repeat-tool-reminder/)
+    — advisory reminders on repeated identical tool calls.
+  - `@deepseek-ai/dsh-tool-call-timeout-policy` (packages/guard/timeout-policy/)
+    — per-tool deadline enforcement on `exec.signal`.
+  - `@deepseek-ai/dsh-client-ui-message-feedback` (packages/client/ui-message-feedback/)
+    — per-message feedback controls (rate, toggle, note) in action strip.
+- **What works:**
+  - AI edit file → approval modal with Accept/Reject (user-approval seam, fail-closed)
+  - "Accept All" → permission-presets switch policy from `ask` to `never`
+  - Thumbs up/down on AI messages (ui-message-feedback with rating + toggle)
+  - Feedback comments saved (message-feedback note sidecar, maxNoteBytes validated)
+  - Feedback logged to session history (command-feedback `/feedback` → `feedback/record` event)
+  - Agent can ask user questions mid-run (ctx.userQuestions seam + tool-ask-user)
+  - Guard policies enforce repeat-tool reminder + timeout deadlines
+- **Proof:** Build (host + client) success. Typecheck pass. 274/274 unit tests
+  passed across 19 test files (0 failed). All 10 packages have build artifacts
+  (lib/ directories). Headless boot: exit 0, "Done — output: `test`", no FATAL.
+- **Compliance:** LICENSE pass, THIRD_PARTY_NOTICES pass, vendor LICENSE intact,
+  zero "DeepSeek" in user-visible UI strings.
+- **API Services produced:**
+  - Session event: `permission/preset` (approval policy + sandbox mode switch)
+  - CLI command: `/feedback` (log-only session feedback recording)
+  - Host Remote: `messageFeedback.rate/toggle` (per-message thumbs up/down)
+  - Agent seam: `ctx.userQuestions` (agent-to-human questions during runs)
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (10 packages, all exist, Phase 2.1 dep satisfied)
+  - Integrator → build success, 274/274 tests passed, typecheck pass
+  - Compliance → PASS (all MIT, no new vendor packages, branding clean)
+  - Verifier → PASS (9/9 tests: 5 AC + 4 smoke)
 
 ### Phase 6.2 — Saya Bisa Ganti Pengaturan Aplikasi  ✅
 
@@ -652,7 +706,6 @@ Updated by the Dokumenter after each phase (Rule 3).
 
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
-| 6.3 | v0.6.2 | Saya Bisa Memberi Feedback & Setujui Aksi | 2.1 | next |
 | 6.4 | v0.6.3 | Saya Bisa Kelola Kredensial dengan Aman | 2.1 | next |
 | 7.1 | v0.7.0 | AI Bisa Buka Halaman Web | 2.1 | next |
 | 8.1 | v0.8.0 | AI Bisa Jalankan Kode dengan Aman | 4.1 | next |
@@ -664,4 +717,4 @@ Updated by the Dokumenter after each phase (Rule 3).
 ## How to continue
 
 Run `/deploy` again — the pipeline auto-detects the next pending phase.
-Phases 6.3 (Feedback), 6.4 (Credentials), 7.1 (Web Browse), 8.1 (Code Execution), 10.1 (Cordis Plugins), 10.2 (MCP Server), and 11.1 (Skills) are now unblocked.
+Phases 6.4 (Credentials), 7.1 (Web Browse), 8.1 (Code Execution), 10.1 (Cordis Plugins), 10.2 (MCP Server), and 11.1 (Skills) are now unblocked.

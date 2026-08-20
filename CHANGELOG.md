@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.2] - 2026-08-20
+
+### Added — Phase 6.3: Saya Bisa Memberi Feedback & Setujui Aksi
+
+- Command feedback (`@deepseek-ai/dsh-command-feedback`): log-only session
+  feedback producer and `/feedback` slash command. Records `feedback/record`
+  events with anonymous user ID and sharing disclosure.
+- Message feedback (`@deepseek-ai/dsh-message-feedback`): lifecycle-bound
+  per-message rating and note sidecar. Supports `rating` (up/down) with
+  optional `note` (validated, maxNoteBytes enforced), persisted as session
+  sidecar.
+- User approval (`@deepseek-ai/dsh-user-approval`): one-shot permission
+  decisions (`allowed-once`, `rejected`, `cancelled`) dispatched over the
+  approval/request waterfall, fail-closed by default. Session-scoped policy
+  (`ask` | `never`).
+- Permission presets (`@deepseek-ai/dsh-permission-presets`): user-facing
+  permission presets bundling sandbox-mode and approval-policy knobs.
+  Switching preset records `permission/preset` event and writes through to
+  both underlying session projections.
+- Tool ask-user (`@deepseek-ai/dsh-tool-ask-user`): model-facing
+  `ask_user_question` tool over the `ctx.userQuestions` seam.
+- User questions (`@deepseek-ai/dsh-user-questions`): abstract user-questions
+  seam (`ctx.userQuestions`) for asking the human during agent runs.
+- Commands registry (`@deepseek-ai/dsh-commands`): plugin-owned human command
+  registry for UIs with brand seam and typert protocol.
+- Repeat tool reminder (`@deepseek-ai/dsh-repeat-tool-reminder`): advisory
+  reminders when an agent loops on identical tool calls.
+- Timeout policy (`@deepseek-ai/dsh-tool-call-timeout-policy`): per-tool
+  deadline enforcement on `exec.signal`, returns `TOOL_TIMEOUT` on expiry.
+- UI message feedback (`@deepseek-ai/dsh-client-ui-message-feedback`):
+  per-message feedback controls (rate, toggle, note) contributed to the
+  assistant-message action strip, backed by the messageFeedback Host Remote.
+
+#### Compliance
+- License audit: pass (all MIT, no new vendor packages)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed
+- Smoke tests: 4/4 passed
+- Build: host + client success, typecheck pass
+- Unit tests: 274/274 passed (19 test files)
+- Headless boot: app responds without FATAL errors
+
 ## [0.6.1] - 2026-08-20
 
 ### Added — Phase 6.2: Saya Bisa Ganti Pengaturan Aplikasi
