@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-08-20
+
+### Added — Phase 10.3: AI Bisa Pakai E2B Sandbox Cloud
+
+- E2B cloud sandbox integration (`@deepseek-ai/dsh-e2b`): shared ownership of
+  one remote E2B sandbox with capability adapters for filesystem, subprocess,
+  and terminal operations. Cloud-isolated VM for resource-heavy workloads
+  (ML training, data processing). API key never forwarded into the sandbox.
+- Filesystem over E2B (`@deepseek-ai/dsh-fs-e2b`): fs seam adapter that
+  redirects file operations to the E2B sandbox filesystem (read, write, glob,
+  mkdir, stat) via the E2B SDK.
+- Subprocess over E2B (`@deepseek-ai/dsh-subprocess-e2b`): shell seam adapter
+  that runs commands in the E2B cloud sandbox with streaming stdout/stderr,
+  terminal emulation, and signal forwarding.
+- Code runtime (`@deepseek-ai/dsh-code-runtime`): in-process code execution
+  engine with worker-thread isolation, JSON-based IPC, and bounded execution.
+- Sandbox framework (`@deepseek-ai/dsh-sandbox`): sandbox policy engine with
+  vocabulary, escalation rules, and root-trust boundaries. Local sandbox
+  (`@deepseek-ai/dsh-sandbox-local`) provides the default on-machine executor.
+
+#### Compliance
+- License audit: pass
+- Branding check: pass
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed (package-level)
+- Smoke tests: 4/4 passed
+- Unit tests: 245/245 passed (20 test files, 30 Windows-only skipped on macOS)
+
 ## [1.0.1] - 2026-08-20
 
 ### Added — Phase 10.2: AI Bisa Pakai MCP Server

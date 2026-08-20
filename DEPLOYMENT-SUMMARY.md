@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v1.0.1** — Phase 10.2: AI Bisa Pakai MCP Server (created)
+**v1.0.2** — Phase 10.3: AI Bisa Pakai E2B Sandbox Cloud (created)
 
 ## API Service Catalog
 
@@ -117,8 +117,67 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 10.2 | MCP client bridge | Agent tool | `mcp__<server>__<tool>` | MCP server tools registered on ctx.tools under qualified names |
 | 10.2 | MCP transport | Provider | stdio / streamable-http | StdioClientTransport (spawn) + StreamableHTTPClientTransport (URL) |
 | 10.2 | MCP reconnect | Policy | Bounded backoff | Exponential backoff (500ms→30s, 10 attempts), tool unreg on exhaustion |
+| 10.3 | E2B cloud sandbox | Agent seam | `ctx.shell` / `ctx.fs` (E2B backend) | Cloud-isolated VM for code execution (ML, data workloads) |
+| 10.3 | E2B filesystem | Provider | `FsE2B` | File operations over E2B SDK (read/write/glob/mkdir/stat) |
+| 10.3 | E2B subprocess | Provider | `SubprocessE2B` | Shell commands in E2B cloud with streaming output, signals |
+| 10.3 | Sandbox policy engine | Policy | `SandboxPolicy`, `SandboxVocabulary` | Declarative sandbox rules with escalation and root-trust boundaries |
+| 10.3 | Local sandbox executor | Provider | `LocalSandboxProvider` | On-machine process isolation with probe-based capability detection |
 
 ## Deployed Phases
+
+### Phase 10.3 — AI Bisa Pakai E2B Sandbox Cloud  ✅
+
+- **Version:** v1.0.2
+- **Date:** 2026-08-20
+- **What was deployed:** 8 packages verified and built:
+  - `@deepseek-ai/dsh-e2b` (packages/e2b/e2b/)
+    — Shared ownership of one remote E2B sandbox. Capability adapters for
+    filesystem, subprocess, and terminal operations in a cloud-isolated VM.
+    API key (E2B_API_KEY) never forwarded into the sandbox environment.
+  - `@deepseek-ai/dsh-fs-e2b` (packages/e2b/fs-e2b/)
+    — Filesystem seam adapter redirecting file operations to E2B sandbox
+    (read, write, glob, mkdir, stat) via the E2B SDK.
+  - `@deepseek-ai/dsh-subprocess-e2b` (packages/e2b/subprocess-e2b/)
+    — Shell seam adapter running commands in E2B cloud sandbox with streaming
+    stdout/stderr, terminal emulation, and signal forwarding.
+  - `@deepseek-ai/dsh-code-runtime` (packages/code-runtime/code-runtime/)
+    — In-process code execution engine with worker-thread isolation and
+    JSON-based IPC for bounded program execution.
+  - `@deepseek-ai/dsh-code-runtime-worker-thread` (packages/code-runtime/code-runtime-worker-thread/)
+    — Worker-thread backend for code runtime with output streaming.
+  - `@deepseek-ai/dsh-sandbox` (packages/sandbox/sandbox/)
+    — Sandbox policy engine: vocabulary, escalation rules, root-trust
+    boundaries, and probe-based capability detection.
+  - `@deepseek-ai/dsh-sandbox-local` (packages/sandbox/sandbox-local/)
+    — Default on-machine sandbox executor using local process isolation.
+  - `@deepseek-ai/dsh-sandbox-policy` (packages/sandbox/sandbox-policy/)
+    — Declarative sandbox policy configuration with invariant enforcement.
+- **What works:**
+  - E2B SDK integration (e2b npm package) with shared sandbox ownership
+  - Filesystem operations over E2B (read/write/glob/mkdir/stat)
+  - Subprocess execution over E2B (streaming stdout/stderr, signals)
+  - Sandbox policy engine (vocabulary, escalation, roots)
+  - Local sandbox executor (process isolation, probe-based capability)
+  - Code runtime with worker-thread isolation
+  - Full build: lib + web pass, typecheck pass (0 errors)
+- **Proof:** Build success for all 8 packages. Typecheck pass (0 errors).
+  245/245 unit tests passed (20 test files, 30 Windows-only skipped on macOS).
+  Full build (lib + web): no errors, no broken imports. `dsh --help`: pass.
+- **Journey summary discrepancy:** `packages/client/ui-sandbox/` does not exist
+  (no dedicated sandbox UI panel). E2B cloud switching is configured via
+  Settings > Sandbox (existing settings infrastructure from Phase 6.2).
+- **Compliance:** LICENSE pass (all MIT), THIRD_PARTY_NOTICES pass, vendor
+  LICENSE intact, zero "DeepSeek" in user-visible UI strings.
+- **API Services produced:**
+  - Agent tool (E2B fs): `read/write/glob/mkdir/stat` via E2B cloud sandbox
+  - Agent tool (E2B shell): subprocess execution in E2B cloud VM
+  - Sandbox policy: `@deepseek-ai/dsh-sandbox-policy` declarative enforcement
+  - Code runtime: worker-thread isolated program execution
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (4 packages from journey, 8 actual sub-packages, 1 missing UI)
+  - Integrator → build success, 245/245 tests passed, typecheck pass
+  - Compliance → PASS (all MIT, branding clean)
+  - Verifier → PASS (9/9 tests: 5 AC + 4 smoke)
 
 ### Phase 10.2 — AI Bisa Pakai MCP Server  ✅
 
@@ -1110,11 +1169,11 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 9.1 | v0.9.0 | AI Punya Asisten Bahasa (LSP) | 3.2 | created |
 | 10.1 | v1.0.0 | AI Bisa Pakai Plugin Dinamis (Cordis) | 2.1 | created |
 | 10.2 | v1.0.1 | AI Bisa Pakai MCP Server | 2.1 | created |
-| 10.3 | v1.0.2 | AI Bisa Pakai E2B Sandbox Cloud | 8.1 | pending |
+| 10.3 | v1.0.2 | AI Bisa Pakai E2B Sandbox Cloud | 8.1 | created |
 | 11.1 | v1.1.0 | AI Bisa Pakai Skill | 2.1 | pending |
 | 11.2 | v1.1.1 | AI Bisa Pakai Preset Persona | 10.1 | pending |
 
 ## How to continue
 
 Run `/deploy` again — the pipeline auto-detects the next pending phase.
-Phases 10.2 (MCP Server), 10.3 (E2B Cloud), 11.1 (Skills), 11.2 (Persona), 11.3 (Workflow), and 12.1 (SDK & ACP) are now unblocked.
+Phases 11.1 (Skills), 11.2 (Persona), 11.3 (Workflow), 12.1 (SDK & ACP) are now unblocked.
