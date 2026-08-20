@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.5.3** — Phase 5.4: Saya Bisa Menentukan Tujuan & Rencana (created)
+**v0.6.0** — Phase 6.1: Saya Bisa Pilih Model AI Berbeda (created)
 
 ## API Service Catalog
 
@@ -82,8 +82,61 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 5.4 | `/plan` command | CLI command | `/plan`, `/plan off` | Enter/exit plan mode (dsh-plan-mode) |
 | 5.4 | Plan exit tool | Agent tool | `plan_exit` | Model-facing tool to leave plan mode (stays registered across transitions) |
 | 5.4 | Plan UI chip | Client seat | `conversation.input.plan` | Browser-surface plan-mode status badge (single-instance seat) |
+| 6.1 | Model selection | RPC | `POST /api/session.selectModel` | Submit model + effort selection (per-session, persisted as deployment default) |
+| 6.1 | Model catalog | RPC | `POST /api/session.models` | Provider-grouped model directory with reasoning effort metadata (enhanced from Phase 2.1) |
+| 6.1 | Model picker UI | Client seat | `conversation.input.model` | Two-level Model/Effort menu in composer (ModelSelect component) |
+| 6.1 | `/model` command | CLI command | `/model` | popupSelect for model switching in chat |
 
 ## Deployed Phases
+
+### Phase 6.1 — Saya Bisa Pilih Model AI Berbeda  ✅
+
+- **Version:** v0.6.0
+- **Date:** 2026-08-20
+- **What was deployed:** 8 packages verified and built:
+  - `@deepseek-ai/dsh-llm` (packages/llm/llm/) — provider-neutral LLM service
+    interface with model catalog, message types, and brand seam.
+  - `@deepseek-ai/dsh-llm-deepseek` (packages/llm/llm-deepseek/) — OpenAI-compatible
+    chat-completions adapter with dynamic config, retry policy, credential rotation.
+  - `@deepseek-ai/dsh-llm-pi-ai` (packages/llm/llm-pi-ai/) — design-verification
+    twin of dsh-llm-deepseek backed by pi-ai SDK.
+  - `@deepseek-ai/dsh-llm-retry` (packages/llm/llm-retry/) — provider-routed retry
+    policy for LLM requests with configurable backoff.
+  - `@deepseek-ai/dsh-token-meter` (packages/llm/token-meter/) — replay-aware token
+    measurement service for context pressure tracking.
+  - `@deepseek-ai/dsh-agent-default-model` (packages/core/agent-default-model/) —
+    settings-based default model selection for new agent sessions.
+  - `@deepseek-ai/dsh-client-ui-model-selection` (packages/client/ui-model-selection/) —
+    two-level Model/Effort menu via `/model` popup and composer seat.
+  - `@deepseek-ai/dsh-client-ui-settings-models` (packages/client/ui-settings-models/) —
+    model configuration in settings panel, onboarding dialogs.
+- **What works:**
+  - Model selection dropdown in UI (ModelSelect component with provider-grouped list)
+  - Per-session model switching via `session.selectModel` RPC
+  - Default model in settings for new sessions (`agent-default-model`)
+  - Model info: name, provider, reasoning effort metadata
+  - Dynamic model switching mid-chat (host snapshots at next prompt-assembly)
+  - LLM retry policy with configurable backoff
+  - Token meter for context pressure tracking
+  - Welcome notice rebranded to RHEA (test fixed)
+- **Proof:** Build (host + client) success. Typecheck pass. 914/914 unit tests
+  passed across 47 test files (0 failed). All 8 packages load at runtime.
+  LLM smoke test: OpenRouter API returned "Hello my friend" (HTTP 200).
+- **Journey summary discrepancy:** `llm-anthropic`, `llm-openai`, `llm-google`
+  don't exist. Actual: `llm-pi-ai`, `llm-retry`, `token-meter`.
+  `ui-model-picker` → real: `ui-model-selection`.
+- **Compliance:** LICENSE pass, THIRD_PARTY_NOTICES pass, vendor LICENSE intact,
+  zero "DeepSeek" in dist/. Welcome notice test updated for RHEA branding.
+- **API Services produced:**
+  - RPC: `POST /api/session.selectModel` — submit model + effort selection
+  - RPC: `POST /api/session.models` — enhanced with reasoning effort metadata
+  - Client seat: `conversation.input.model` — two-level Model/Effort menu
+  - CLI command: `/model` — popupSelect for model switching
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (8 packages, all exist, Phase 2.1 dep satisfied)
+  - Integrator → build success, 914/914 tests passed, typecheck pass
+  - Compliance → PASS (all MIT, no new vendor packages, branding fixed)
+  - Verifier → PASS (10/10 tests: 5 AC + 5 smoke)
 
 ### Phase 5.4 — Saya Bisa Menentukan Tujuan & Rencana  ✅
 
@@ -558,12 +611,17 @@ Updated by the Dokumenter after each phase (Rule 3).
 
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
-| 5.3 | v0.5.2 | Saya Bisa Bikin Sub-Agent | 2.1 | next |
-| 5.4 | v0.5.3 | Saya Bisa Menentukan Tujuan & Rencana | 5.2 | next |
-| 8.1 | v0.8.0 | AI Bisa Jalankan Kode dengan Aman | 4.2 | next |
+| 6.2 | v0.6.1 | Saya Bisa Ganti Pengaturan Aplikasi | 1.2 | next |
+| 6.3 | v0.6.2 | Saya Bisa Memberi Feedback & Setujui Aksi | 2.1 | next |
+| 6.4 | v0.6.3 | Saya Bisa Kelola Kredensial dengan Aman | 2.1 | next |
+| 7.1 | v0.7.0 | AI Bisa Buka Halaman Web | 2.1 | next |
+| 8.1 | v0.8.0 | AI Bisa Jalankan Kode dengan Aman | 4.1 | next |
 | 9.1 | v0.9.0 | AI Punya Asisten Bahasa (LSP) | 3.2 | pending |
+| 10.1 | v1.0.0 | AI Bisa Pakai Plugin Dinamis (Cordis) | 2.1 | next |
+| 10.2 | v1.0.1 | AI Bisa Pakai MCP Server | 2.1 | next |
+| 11.1 | v1.1.0 | AI Bisa Pakai Skill | 2.1 | next |
 
 ## How to continue
 
 Run `/deploy` again — the pipeline auto-detects the next pending phase.
-Phases 5.3 (Sub-Agent), 5.4 (Goal & Plan), 6.1 (Model Picker), 7.1 (Web Browse), 8.1 (Code Execution), 10.1 (Cordis Plugins), 10.2 (MCP Server), and 11.1 (Skills) are now unblocked.
+Phases 6.2 (Settings), 6.3 (Feedback), 6.4 (Credentials), 7.1 (Web Browse), 8.1 (Code Execution), 10.1 (Cordis Plugins), 10.2 (MCP Server), and 11.1 (Skills) are now unblocked.

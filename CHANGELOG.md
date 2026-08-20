@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-08-20
+
+### Added — Phase 6.1: Saya Bisa Pilih Model AI Berbeda
+
+- Model selection UI (`@deepseek-ai/dsh-client-ui-model-selection`): two-level
+  Model/Effort menu via `/model` popup and `conversation.input.model` composer
+  seat. Provider-grouped model directory loaded through `session.models` RPC,
+  submitted through `session.selectModel` RPC.
+- Model settings UI (`@deepseek-ai/dsh-client-ui-settings-models`): model
+  configuration in settings panel, onboarding dialogs for API key setup.
+  Welcome notice rebranded to RHEA.
+- Default model service (`@deepseek-ai/dsh-agent-default-model`): settings-based
+  default model selection for new agent sessions. `readDefaultModel()` /
+  `saveDefaultModel()` with settings namespace `agent-default-model`.
+- LLM core (`@deepseek-ai/dsh-llm`): provider-neutral LLM service interface
+  with model catalog, message types, and brand seam.
+- LLM DeepSeek adapter (`@deepseek-ai/dsh-llm-deepseek`): OpenAI-compatible
+  chat-completions adapter with dynamic config, retry policy, and credential
+  rotation. Routes to OpenRouter via `DEEPSEEK_BASE_URL`.
+- LLM Pi-AI adapter (`@deepseek-ai/dsh-llm-pi-ai`): design-verification twin
+  of dsh-llm-deepseek backed by pi-ai SDK.
+- LLM retry (`@deepseek-ai/dsh-llm-retry`): provider-routed retry policy for
+  LLM requests with configurable backoff.
+- Token meter (`@deepseek-ai/dsh-token-meter`): replay-aware token measurement
+  service for context pressure tracking.
+
+#### Compliance
+- License audit: pass (all MIT, no new vendor packages)
+- Branding check: pass (zero "DeepSeek" in dist/, test fixed for RHEA rebranding)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed
+- Smoke tests: 5/5 passed
+- Unit tests: 914/914 passed (LLM: 675 across 34 files, client/core: 239 across 13 files)
+
+### Next
+
+- Phase 6.2 (v0.6.1) — Saya Bisa Ganti Pengaturan Aplikasi (prereq 1.2 satisfied).
+- Phase 6.3 (v0.6.2) — Saya Bisa Memberi Feedback & Setujui Aksi (prereq 2.1 satisfied).
+- Phase 6.4 (v0.6.3) — Saya Bisa Kelola Kredensial dengan Aman (prereq 2.1 satisfied).
+
 ## [0.5.3] - 2026-08-20
 
 ### Added — Phase 5.4: Saya Bisa Menentukan Tujuan & Rencana
