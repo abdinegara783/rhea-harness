@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.5.1** — Phase 5.2: Daftar Tugas & Todo Agent (created)
+**v0.5.2** — Phase 5.3: Saya Bisa Bikin Sub-Agent (created)
 
 ## API Service Catalog
 
@@ -71,6 +71,9 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 4.2 | terminal_list | Agent tool | `terminal_list()` | List owned persistent terminal sessions |
 | 5.2 | todo/write | Agent tool | `todo/write(items[])` | AI replaces entire todo list (whole-list snapshot, status: pending/in_progress/completed) |
 | 5.2 | Todo projection | Session projection | `todos: TodoItem[] \| null` | Session projection key for todo state (last-write-wins) |
+| 5.3 | Subagent registry | Agent seam | `ctx.subagents` | Named-provider registry for delegating to child agents |
+| 5.3 | Subagent list (RPC) | RPC | `POST /api/subagent.list` | List available sub-agent providers (already cataloged in 2.1, now verified with UI) |
+| 5.3 | Skill registry | Agent seam | `ctx.skills` | Skill provider registry for loading SKILL.md capabilities |
 
 ## Deployed Phases
 
@@ -104,6 +107,45 @@ Updated by the Dokumenter after each phase (Rule 3).
   - Integrator → build success, 502/502 Phase 5.2 tests passed, typecheck pass
   - Compliance → PASS (all MIT, no new vendor packages)
   - Verifier → PASS (9/9 tests: 5 AC + 4 smoke)
+
+### Phase 5.3 — Saya Bisa Bikin Sub-Agent  ✅
+
+- **Version:** v0.5.2
+- **Date:** 2026-08-20
+- **What was deployed:** 4 packages verified and built:
+  - `@deepseek-ai/dsh-subagent` (packages/subagent/subagent/) — named-provider
+    registry for delegating to child agents. Supports in-process,
+    fork-in-process, ACP, Claude Code, Codex, and DSH SDK child types.
+  - `@deepseek-ai/dsh-agent` (packages/core/agent/) — agent interface,
+    registry, initiator scope, event vocabulary (foundation for sub-agents).
+  - `@deepseek-ai/dsh-client-ui-subagent` (packages/client/ui-subagent/) —
+    SubagentCatalogAction, SubagentReadOnlyComposer (browser UI for sub-agents).
+  - `@deepseek-ai/dsh-skill` (packages/skill/skill/) — skill provider registry
+    for loading SKILL.md files and registering skill capabilities.
+- **What works:**
+  - AI creates sub-agents for specific tasks via `ctx.subagents` seam
+  - Sub-agent status (running/completed) visible in UI
+  - Sub-agents use their own tools, visible in logs
+  - Results from sub-agents flow back to main chat via continuation chains
+  - Multiple sub-agents can run in parallel (fork-in-process verified)
+  - Skill provider loads SKILL.md files and registers capabilities
+- **Proof:** Build (host + client) success. Typecheck pass. 402/402 unit tests
+  passed (0 failed, 1 skipped). All build artifacts present.
+- **Compliance:** LICENSE pass, THIRD_PARTY_NOTICES pass, vendor LICENSE intact,
+  no DeepSeek in UI strings. About/credits page gap noted (pre-existing).
+- **API Services produced:**
+  - Agent seam: `ctx.subagents` — named-provider registry for child agents
+  - Agent seam: `ctx.skills` — skill provider registry
+  - RPC: `POST /api/subagent.list` — list available sub-agent providers (verified with UI)
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (4 packages, all exist, Phase 2.1 dep satisfied)
+  - Integrator → build success, 402/402 tests passed, typecheck pass
+  - Compliance → PASS (1 remediation: copied THIRD_PARTY_NOTICES.md)
+  - Verifier → PASS (8/8 tests: 5 AC + 3 smoke)
+- **Known issues:**
+  - About/credits page still missing (pre-existing since Phase 1.2, low priority)
+  - 3 tsconfig files and 9 vitest config files were missing from rhea-harness
+    and had to be copied from learn-harness during Integrator step
 
 ### Phase 5.1 — Sesi Chat Bisa Dipangkas Otomatis  ✅
 

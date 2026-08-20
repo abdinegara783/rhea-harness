@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-08-20
+
+### Added — Phase 5.3: Saya Bisa Bikin Sub-Agent
+
+- Sub-agent seam (`@deepseek-ai/dsh-subagent`): named-provider registry for
+  delegating to child agents via `ctx.subagents`. Supports in-process,
+  fork-in-process, ACP, Claude Code, Codex, and DSH SDK child types.
+- Core agent package (`@deepseek-ai/dsh-agent`): agent interface, registry,
+  initiator scope, and event vocabulary — already present, verified as
+  sub-agent foundation.
+- Client UI for sub-agents (`@deepseek-ai/dsh-client-ui-subagent`):
+  SubagentCatalogAction (browse/select sub-agents), SubagentReadOnlyComposer
+  (view sub-agent conversation continuations).
+- Skill provider (`@deepseek-ai/dsh-skill`): agent skill provider registry
+  for loading SKILL.md files and registering skill capabilities.
+
+#### Compliance
+- License audit: pass
+- Branding check: pass (no DeepSeek in user-visible strings)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed
+- Smoke tests: 3/3 passed (build, typecheck, 402 unit tests)
+
 ## [0.5.1] - 2026-08-20
 
 ### Added — Phase 5.2: Daftar Tugas & Todo Agent
