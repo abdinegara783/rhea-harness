@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.7.0** — Phase 7.1: AI Bisa Buka Halaman Web (created)
+**v0.7.1** — Phase 7.2: AI Bisa Cari di Internet (created)
 
 ## API Service Catalog
 
@@ -94,8 +94,57 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 7.1 | web_search | Agent tool | `web_search(query)` | Search the web for information (provider-dependent) |
 | 7.1 | Web fetch seam | Agent seam | `ctx.web` | Abstract web access seam (search/fetch provider registry) |
 | 7.1 | HTTP fetch provider | Provider | `HttpFetchProvider` | Anonymous public HTTP(S) fetch with redirect control, timeout, resource limits |
+| 7.2 | DeepSeek search provider | Provider | `DeepSeekSearchProvider` | Native web_search via Anthropic-compatible API (settings-namespaced config) |
+| 7.2 | Exa search provider | Provider | `ExaSearchProvider` | Exa-backed neural/keyword search with highlights |
+| 7.2 | Perplexity search provider | Provider | `PerplexitySearchProvider` | Perplexity-backed search with model selection |
+| 7.2 | web_search (enhanced) | Agent tool | `web_search(query)` | Now dispatches to registered search provider (DeepSeek/Exa/Perplexity) |
 
 ## Deployed Phases
+
+### Phase 7.2 — AI Bisa Cari di Internet  ✅
+
+- **Version:** v0.7.1
+- **Date:** 2026-08-20
+- **What was deployed:** 4 packages verified and built:
+  - `@deepseek-ai/dsh-web-search-deepseek` (packages/web/web-search-deepseek/)
+    — DeepSeek-backed search provider. Native web_search via the
+    Anthropic-compatible API. Settings-namespaced configuration (base URL,
+    API version, model, max tokens, max uses). `DeepSeekSearchProvider`
+    class with `apply`/`inject` cordis lifecycle.
+  - `@deepseek-ai/dsh-web-search-exa` (packages/web/web-search-exa/)
+    — Exa-backed search provider. Configurable search type (neural/keyword),
+    highlights per result, base URL override. `ExaSearchProvider` class.
+  - `@deepseek-ai/dsh-web-search-perplexity` (packages/web/web-search-perplexity/)
+    — Perplexity-backed search provider. Model selection, max-token control,
+    base URL override. `PerplexitySearchProvider` class.
+  - `@deepseek-ai/dsh-tool-web` (packages/web/tool-web/) — model-facing
+    `web_search` and `web_fetch` tools enhanced. `web_search` now dispatches
+    to the registered search provider. Output formatting with source
+    citations and structured results.
+- **What works:**
+  - Three search providers register via cordis plugin lifecycle
+  - `web_search` tool dispatches to active provider (DeepSeek/Exa/Perplexity)
+  - Each provider exports Config schema, provider ID, and cordis apply/inject
+  - Settings-namespaced configuration per provider
+  - Provider selection based on which plugin is loaded
+- **Proof:** Build artifacts present for all 4 packages. Typecheck pass
+  (0 errors). All packages export correct provider classes and tool
+  functions. Headless boot: no FATAL errors. No broken imports.
+- **Journey summary discrepancy:** `packages/client/ui-search-results/`
+  does not exist. No dedicated client UI package for search results in
+  this phase (search results rendered via existing conversation UI).
+- **Compliance:** LICENSE pass, THIRD_PARTY_NOTICES pass, vendor LICENSE
+  intact, zero "DeepSeek" in user-visible UI strings.
+- **API Services produced:**
+  - Provider: `DeepSeekSearchProvider` — native web_search via Anthropic-compatible API
+  - Provider: `ExaSearchProvider` — Exa neural/keyword search
+  - Provider: `PerplexitySearchProvider` — Perplexity search with model selection
+  - Agent tool: `web_search(query)` — enhanced to dispatch to registered search provider
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (4 packages + 1 missing, Phase 7.1 dep satisfied)
+  - Integrator → build success, typecheck pass, no Phase 7.2 test failures
+  - Compliance → PASS (all MIT, branding clean)
+  - Verifier → PASS (9/9 non-LLM tests passed, live search = evidence gap)
 
 ### Phase 7.1 — AI Bisa Buka Halaman Web  ✅
 

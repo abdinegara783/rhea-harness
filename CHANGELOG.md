@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-08-20
+
+### Added — Phase 7.2: AI Bisa Cari di Internet
+
+- DeepSeek search provider (`@deepseek-ai/dsh-web-search-deepseek`):
+  native web_search via the Anthropic-compatible API. Settings-namespaced
+  configuration (base URL, API version, model, max tokens, max uses).
+- Exa search provider (`@deepseek-ai/dsh-web-search-exa`): Exa-backed
+  search with configurable search type (neural/keyword), highlights per
+  result, and base URL override.
+- Perplexity search provider (`@deepseek-ai/dsh-web-search-perplexity`):
+  Perplexity-backed search with model selection and max-token control.
+- Web tools enhanced (`@deepseek-ai/dsh-tool-web`): `web_search` tool now
+  dispatches to the registered search provider (DeepSeek, Exa, or
+  Perplexity). Output formatting with source citations.
+
+#### Compliance
+- License audit: pass (all MIT, no new vendor packages)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 4/5 passed (dependency resolution, build, exports, headless boot; live search requires API keys — evidence gap)
+- Smoke tests: 5/5 passed (typecheck, no broken imports, no FATAL, all 4 packages export correctly)
+
 ## [0.7.0] - 2026-08-20
 
 ### Added — Phase 7.1: AI Bisa Buka Halaman Web
