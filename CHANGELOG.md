@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-08-20
+
+### Added — Phase 10.2: AI Bisa Pakai MCP Server
+
+- MCP client bridge (`@deepseek-ai/dsh-mcp-client`): connects to external MCP
+  servers and registers their tools on `ctx.tools` under server-qualified
+  public names (`mcp__<serverName>__<rawName>`). Supports stdio and
+  streamable-http transports, automatic tool discovery and re-sync on
+  `ToolListChanged` notifications, bounded exponential-backoff reconnection,
+  sensitive env scrubbing for child processes, and per-server namespace
+  isolation with duplicate-name rejection.
+
+#### Compliance
+- License audit: pass
+- Branding check: pass
+- Third-party notices: up-to-date (@modelcontextprotocol/sdk MIT listed)
+
+#### Verification
+- Acceptance tests: 5/5 passed
+- Smoke tests: 4/4 passed
+- Unit tests: 92/92 passed (4 test files)
+
 ## [1.0.0] - 2026-08-20
 
 ### Added — Phase 10.1: AI Bisa Pakai Plugin Dinamis (Cordis)

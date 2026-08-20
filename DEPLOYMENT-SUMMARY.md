@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v1.0.0** — Phase 10.1: AI Bisa Pakai Plugin Dinamis (Cordis) (created)
+**v1.0.1** — Phase 10.2: AI Bisa Pakai MCP Server (created)
 
 ## API Service Catalog
 
@@ -114,8 +114,57 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 9.1 | TypeScript LSP | Config | `npx typescript-language-server --stdio` | Default language server for .ts/.tsx/.js/.jsx |
 | 10.1 | Plugin inventory | RPC | `POST /api/pluginInventory.list` | List loaded Cordis plugins with status (enabled, fiber phase) |
 | 10.1 | Plugins settings | Client seat | Settings > Plugins | Plugin cards with enable/disable toggle, config forms |
+| 10.2 | MCP client bridge | Agent tool | `mcp__<server>__<tool>` | MCP server tools registered on ctx.tools under qualified names |
+| 10.2 | MCP transport | Provider | stdio / streamable-http | StdioClientTransport (spawn) + StreamableHTTPClientTransport (URL) |
+| 10.2 | MCP reconnect | Policy | Bounded backoff | Exponential backoff (500ms→30s, 10 attempts), tool unreg on exhaustion |
 
 ## Deployed Phases
+
+### Phase 10.2 — AI Bisa Pakai MCP Server  ✅
+
+- **Version:** v1.0.1
+- **Date:** 2026-08-20
+- **What was deployed:** 1 package verified and built:
+  - `@deepseek-ai/dsh-mcp-client` (packages/mcp/mcp-client/)
+    — MCP client bridge Cordis plugin. Connects to external MCP servers
+    via stdio or streamable-http transports, discovers their tools, and
+    registers them on `ctx.tools` under server-qualified public names
+    (`mcp__<serverName>__<rawName>`). Connection supervisor with bounded
+    exponential-backoff reconnection (500ms→30s, 10 attempts max),
+    tool-list change notifications, sensitive env scrubbing for child
+    processes, and per-server namespace isolation.
+- **What works:**
+  - MCP plugin loads as Cordis plugin (name: "mcp-client", inject: ["tools"])
+  - Config schema validates stdio and streamable-http server configs
+  - Tool naming: `mcp__<serverName>__<rawName>` (DeepSeek function-name safe)
+  - Transport factory: StdioClientTransport (spawn child process) + StreamableHTTPClientTransport (URL)
+  - Tool sync: paginated `tools/list` → register on ctx.tools with disposer map
+  - Tool call: `tools/call` with abort signal + timeout, result mapping to ContentBlocks
+  - Reconnection: bounded backoff, generation-close timeout, attempt budget
+  - ToolListChanged notification → automatic re-sync
+  - Duplicate serverName rejection per app root
+  - @modelcontextprotocol/sdk@1.29.0 installed and loadable
+- **Proof:** Build artifacts present (lib/index.js, lib/invariant.js, lib/types/).
+  Typecheck pass (0 errors). 92/92 unit tests passed (4 test files: mcp-client.spec,
+  reconnect.spec, apply.spec, load-path.spec). Headless boot: pass ("Test received
+  — everything's working!"). LLM smoke test: OpenRouter returned "Hello there,
+  how are you?" (HTTP 200). dsh --help: pass.
+- **Journey summary discrepancy:** `packages/mcp/` → real: `packages/mcp/mcp-client/`.
+  `packages/client/ui-mcp/` does not exist (no dedicated MCP UI panel).
+  `packages/extensions/` → real: `packages/extensions/tool-cordis/` (already deployed
+  in Phase 10.1). Supporting packages (dsh-tools, dsh-tool-cordis) already built.
+- **Compliance:** LICENSE pass (all MIT), THIRD_PARTY_NOTICES pass
+  (@modelcontextprotocol/sdk MIT listed), vendor LICENSE intact,
+  zero "DeepSeek" in user-visible UI strings.
+- **API Services produced:**
+  - Agent tool: `mcp__<server>__<tool>` — MCP server tools registered on ctx.tools
+  - Provider: stdio / streamable-http transports for MCP server connections
+  - Policy: bounded exponential-backoff reconnection (500ms→30s, 10 attempts)
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (3 packages + 1 missing, Phase 2.1 dep satisfied)
+  - Integrator → build success, 92/92 tests passed, typecheck pass
+  - Compliance → PASS (all MIT, @modelcontextprotocol/sdk MIT, branding clean)
+  - Verifier → PASS (9/9 tests: 5 AC + 4 smoke)
 
 ### Phase 10.1 — AI Bisa Pakai Plugin Dinamis (Cordis)  ✅
 
@@ -1060,7 +1109,7 @@ Updated by the Dokumenter after each phase (Rule 3).
 |---|---|---|---|---|
 | 9.1 | v0.9.0 | AI Punya Asisten Bahasa (LSP) | 3.2 | created |
 | 10.1 | v1.0.0 | AI Bisa Pakai Plugin Dinamis (Cordis) | 2.1 | created |
-| 10.2 | v1.0.1 | AI Bisa Pakai MCP Server | 2.1 | pending |
+| 10.2 | v1.0.1 | AI Bisa Pakai MCP Server | 2.1 | created |
 | 10.3 | v1.0.2 | AI Bisa Pakai E2B Sandbox Cloud | 8.1 | pending |
 | 11.1 | v1.1.0 | AI Bisa Pakai Skill | 2.1 | pending |
 | 11.2 | v1.1.1 | AI Bisa Pakai Preset Persona | 10.1 | pending |
