@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-08-20
+
+### Added — Phase 7.1: AI Bisa Buka Halaman Web
+
+- Web fetch seam (`@deepseek-ai/dsh-web`): abstract web access capability seam
+  (`ctx.web`) — search/fetch provider registry, request/result vocabulary, and
+  the WebError taxonomy.
+- HTTP fetch provider (`@deepseek-ai/dsh-web-fetch-http`): anonymous public
+  HTTP(S) fetch provider with redirect control, content-type classification,
+  body cancellation, timeout enforcement, and resource limits.
+- Web tools (`@deepseek-ai/dsh-tool-web`): model-facing `web_fetch` and
+  `web_search` tools over `ctx.web`. HTML→markdown via turndown. Spill
+  support for large outputs. Configurable caps on output size and timeout.
+
+#### Compliance
+- License audit: pass (all MIT, turndown MIT, @joplin/turndown-plugin-gfm MIT)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings)
+- Third-party notices: up-to-date (turndown deps already listed)
+
+#### Verification
+- Acceptance tests: 5/5 passed (fetch, docs, URL, 404, extraction)
+- Smoke tests: 5/5 passed (boot, 142 unit tests, 8 integration, typecheck, runtime imports)
+
 ## [0.6.3] - 2026-08-20
 
 ### Added — Phase 6.4: Saya Bisa Kelola Kredensial dengan Aman

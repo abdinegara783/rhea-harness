@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.6.3** — Phase 6.4: Saya Bisa Kelola Kredensial dengan Aman (created)
+**v0.7.0** — Phase 7.1: AI Bisa Buka Halaman Web (created)
 
 ## API Service Catalog
 
@@ -90,8 +90,63 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 6.3 | `/feedback` command | CLI command | `/feedback` | Record session feedback (log-only, anonymous user ID) |
 | 6.3 | Message feedback rating | Host Remote | `messageFeedback.rate/toggle` | Per-message thumbs up/down with optional note |
 | 6.3 | User questions | Agent seam | `ctx.userQuestions` | Abstract seam for agent-to-human questions during runs |
+| 7.1 | web_fetch | Agent tool | `web_fetch(url)` | Fetch web page content, HTML→markdown via turndown |
+| 7.1 | web_search | Agent tool | `web_search(query)` | Search the web for information (provider-dependent) |
+| 7.1 | Web fetch seam | Agent seam | `ctx.web` | Abstract web access seam (search/fetch provider registry) |
+| 7.1 | HTTP fetch provider | Provider | `HttpFetchProvider` | Anonymous public HTTP(S) fetch with redirect control, timeout, resource limits |
 
 ## Deployed Phases
+
+### Phase 7.1 — AI Bisa Buka Halaman Web  ✅
+
+- **Version:** v0.7.0
+- **Date:** 2026-08-20
+- **What was deployed:** 3 packages verified and built:
+  - `@deepseek-ai/dsh-web` (packages/web/web/) — abstract web access
+    capability seam (`ctx.web`). Search/fetch provider registry,
+    registration-order-independent selection, request/result vocabulary,
+    and the WebError taxonomy.
+  - `@deepseek-ai/dsh-web-fetch-http` (packages/web/web-fetch-http/) —
+    anonymous public HTTP(S) fetch provider. Redirect control (cross-origin
+    blocking), content-type classification, body cancellation on error paths,
+    timeout enforcement, and configurable resource limits (maxUrlLength,
+    maxResponseBytes, maxBodyChars, timeoutMs, maxRedirects).
+  - `@deepseek-ai/dsh-tool-web` (packages/web/tool-web/) — model-facing
+    `web_fetch` and `web_search` tools over `ctx.web`. HTML→markdown
+    conversion via turndown with GFM plugin. Spill support for large
+    outputs. Configurable caps (fetchMaxOutputChars, searchMaxResults,
+    fetchTimeoutMs, searchTimeoutMs).
+- **What works:**
+  - AI fetches web pages via `web_fetch` tool (HTTP 200 → markdown body)
+  - AI searches the web via `web_search` tool (provider-dependent)
+  - HTML→markdown conversion handles tables, links, nesting, entities
+  - 404 and error responses returned as structured results (not thrown)
+  - Cross-origin redirect blocking (WEB_REDIRECT_BLOCKED)
+  - Timeout enforcement (WEB_FETCH_TIMEOUT vs TOOL_TIMEOUT)
+  - Spill support for outputs exceeding fetchMaxOutputChars
+  - URL validation (scheme, credentials, length)
+  - Content-type classification (html, text, unsupported)
+  - Body cancellation on error paths (no leaked streams)
+- **Proof:** Build artifacts present for all 3 packages. Typecheck pass
+  (0 errors). 142/142 unit tests passed (6 test files). 8/8 integration
+  tests passed (real HTTP fetch, 404, redirect blocking, timeout).
+  Headless boot: LLM responded "Hello! I'm up and running." No FATAL.
+  Live fetch: example.com → HTTP 200, "Example Domain" extracted.
+- **Journey summary discrepancy:** `packages/client/ui-web-preview/`
+  does not exist. No client UI package for web preview in this phase.
+- **Compliance:** LICENSE pass, THIRD_PARTY_NOTICES pass (turndown,
+  @joplin/turndown-plugin-gfm, @types/turndown all listed), vendor
+  LICENSE intact, zero "DeepSeek" in user-visible UI strings.
+- **API Services produced:**
+  - Agent tool: `web_fetch(url)` — fetch page content, HTML→markdown
+  - Agent tool: `web_search(query)` — search the web (provider-dependent)
+  - Agent seam: `ctx.web` — abstract web access (search/fetch registry)
+  - Provider: `HttpFetchProvider` — anonymous HTTP(S) fetch with limits
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (3 packages + 1 missing, Phase 2.1 dep satisfied)
+  - Integrator → build success, 142/142 tests passed, typecheck pass
+  - Compliance → PASS (all MIT, turndown MIT, branding clean)
+  - Verifier → PASS (10/10 tests: 5 AC + 5 smoke)
 
 ### Phase 6.4 — Saya Bisa Kelola Kredensial dengan Aman  ✅
 
@@ -754,7 +809,7 @@ Updated by the Dokumenter after each phase (Rule 3).
 
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
-| 7.1 | v0.7.0 | AI Bisa Buka Halaman Web | 2.1 | next |
+| 7.2 | v0.7.1 | AI Bisa Cari di Internet | 7.1 | next |
 | 8.1 | v0.8.0 | AI Bisa Jalankan Kode dengan Aman | 4.1 | next |
 | 9.1 | v0.9.0 | AI Punya Asisten Bahasa (LSP) | 3.2 | pending |
 | 10.1 | v1.0.0 | AI Bisa Pakai Plugin Dinamis (Cordis) | 2.1 | next |
@@ -764,4 +819,4 @@ Updated by the Dokumenter after each phase (Rule 3).
 ## How to continue
 
 Run `/deploy` again — the pipeline auto-detects the next pending phase.
-Phases 7.1 (Web Browse), 8.1 (Code Execution), 10.1 (Cordis Plugins), 10.2 (MCP Server), and 11.1 (Skills) are now unblocked.
+Phases 7.2 (Web Search), 8.1 (Code Execution), 10.1 (Cordis Plugins), 10.2 (MCP Server), and 11.1 (Skills) are now unblocked.
