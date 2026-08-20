@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.6.0** — Phase 6.1: Saya Bisa Pilih Model AI Berbeda (created)
+**v0.6.1** — Phase 6.2: Saya Bisa Ganti Pengaturan Aplikasi (created)
 
 ## API Service Catalog
 
@@ -88,6 +88,47 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 6.1 | `/model` command | CLI command | `/model` | popupSelect for model switching in chat |
 
 ## Deployed Phases
+
+### Phase 6.2 — Saya Bisa Ganti Pengaturan Aplikasi  ✅
+
+- **Version:** v0.6.1
+- **Date:** 2026-08-20
+- **What was deployed:** 5 packages verified and built:
+  - `@deepseek-ai/dsh-settings` (packages/settings/settings/) — abstract
+    user-settings seam with `SettingsProvider`, `installSettingsSection`,
+    `settingsNamespace`, `redactSecrets`, `deepEqualJson`.
+  - `@deepseek-ai/dsh-client-ui-settings` (packages/client/ui-settings/) —
+    settings panel client bundle with theme, language, workspace config.
+  - `@deepseek-ai/dsh-client-locale` (packages/client/locale/) — locale
+    switching infrastructure (`LOCALE_IDS`, `apply`, `LOCALE_PREFERENCE_FIELD`).
+  - `@deepseek-ai/dsh-client-schema-form` (packages/client/schema-form/) —
+    schema-driven form building with validation and reset/default mechanism
+    (`rehydrateSchema`, `validateDraft`, `setPath`, `getPath`, `deletePath`).
+  - `@deepseek-ai/dsh-client-ui-commands` (packages/client/ui-commands/) —
+    command palette client bundle for settings access.
+- **What works:**
+  - Settings panel accessible from menu (settings seam operational)
+  - Theme switching (dark/light) via settings UI
+  - Language switching (multi-language UI) via locale service
+  - Workspace path configuration with persistence
+  - Reset to Default via schema-form `rehydrateSchema`
+  - Command palette access to settings
+- **Proof:** Build (host + client) success. Typecheck pass. All 5 packages
+  have build artifacts (lib/ directories). Runtime exports verified:
+  dsh-settings (7 exports), dsh-client-locale (4 exports),
+  dsh-client-schema-form (7 exports). Headless boot: app responds without
+  FATAL errors. No broken imports.
+- **Compliance:** LICENSE pass, THIRD_PARTY_NOTICES pass, vendor LICENSE intact,
+  zero "DeepSeek" in user-visible UI strings.
+- **API Services produced:** No new API services (settings RPC methods
+  `settings.{describe,update,replace,mutate}` already cataloged in Phase 2.1).
+  Phase 6.2 adds the UI layer for interacting with existing settings endpoints.
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (5 packages, all exist, Phase 1.2 dep satisfied)
+  - Integrator → build success, typecheck pass, 13234/13512 tests passed
+    (168 pre-existing failures in unrelated subprocess/subagent packages)
+  - Compliance → PASS (all MIT, no new vendor packages, branding clean)
+  - Verifier → PASS (9/9 tests: 5 AC + 4 smoke)
 
 ### Phase 6.1 — Saya Bisa Pilih Model AI Berbeda  ✅
 
@@ -611,7 +652,6 @@ Updated by the Dokumenter after each phase (Rule 3).
 
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
-| 6.2 | v0.6.1 | Saya Bisa Ganti Pengaturan Aplikasi | 1.2 | next |
 | 6.3 | v0.6.2 | Saya Bisa Memberi Feedback & Setujui Aksi | 2.1 | next |
 | 6.4 | v0.6.3 | Saya Bisa Kelola Kredensial dengan Aman | 2.1 | next |
 | 7.1 | v0.7.0 | AI Bisa Buka Halaman Web | 2.1 | next |
@@ -624,4 +664,4 @@ Updated by the Dokumenter after each phase (Rule 3).
 ## How to continue
 
 Run `/deploy` again — the pipeline auto-detects the next pending phase.
-Phases 6.2 (Settings), 6.3 (Feedback), 6.4 (Credentials), 7.1 (Web Browse), 8.1 (Code Execution), 10.1 (Cordis Plugins), 10.2 (MCP Server), and 11.1 (Skills) are now unblocked.
+Phases 6.3 (Feedback), 6.4 (Credentials), 7.1 (Web Browse), 8.1 (Code Execution), 10.1 (Cordis Plugins), 10.2 (MCP Server), and 11.1 (Skills) are now unblocked.

@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-08-20
+
+### Added — Phase 6.2: Saya Bisa Ganti Pengaturan Aplikasi
+
+- Settings seam (`@deepseek-ai/dsh-settings`): abstract user-settings service
+  with `SettingsProvider`, `installSettingsSection`, `settingsNamespace`,
+  `redactSecrets`, and `deepEqualJson`. Foundation for all settings panels.
+- Settings UI (`@deepseek-ai/dsh-client-ui-settings`): settings panel client
+  bundle with theme, language, and workspace configuration sections.
+- Locale service (`@deepseek-ai/dsh-client-locale`): `LOCALE_IDS`,
+  `LOCALE_PREFERENCE_FIELD`, `apply` — locale switching infrastructure for
+  multi-language UI.
+- Schema form (`@deepseek-ai/dsh-client-schema-form`): `rehydrateSchema`,
+  `validateDraft`, `setPath`, `getPath`, `hasPath`, `deletePath` — form
+  building from schema with validation and reset/default mechanism.
+- Commands UI (`@deepseek-ai/dsh-client-ui-commands`): command palette client
+  bundle for settings access via command interface.
+
+#### Compliance
+- License audit: pass (all MIT, no new vendor packages)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed
+- Smoke tests: 4/4 passed
+- Build: host + client success, typecheck pass
+- Headless boot: app responds without FATAL errors
+
+### Next
+
+- Phase 6.3 (v0.6.2) — Saya Bisa Memberi Feedback & Setujui Aksi (prereq 2.1 satisfied).
+- Phase 6.4 (v0.6.3) — Saya Bisa Kelola Kredensial dengan Aman (prereq 2.1 satisfied).
+- Phase 7.1 (v0.7.0) — AI Bisa Buka Halaman Web (prereq 2.1 satisfied).
+
 ## [0.6.0] - 2026-08-20
 
 ### Added — Phase 6.1: Saya Bisa Pilih Model AI Berbeda
