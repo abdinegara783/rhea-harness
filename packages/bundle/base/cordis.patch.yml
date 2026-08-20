@@ -229,6 +229,25 @@
       config:
         sampleOverCapGlobResults: false
 
+    - id: lsp
+      name: '@deepseek-ai/dsh-lsp'
+
+    - id: lsp-stdio
+      name: '@deepseek-ai/dsh-lsp-stdio'
+      config:
+        servers:
+          typescript:
+            command: npx
+            args: [--yes, typescript-language-server@5.0.0, --stdio]
+            extensionToLanguage:
+              .ts: typescript
+              .tsx: typescriptreact
+              .js: javascript
+              .jsx: javascriptreact
+
+    - id: tool-lsp
+      name: '@deepseek-ai/dsh-tool-lsp'
+
     - id: agent-instructions
       name: '@deepseek-ai/dsh-agent-instructions'
       config:

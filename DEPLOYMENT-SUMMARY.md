@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.8.1** — Phase 8.2: Sandboxing Native (Landlock) (created)
+**v0.9.0** — Phase 9.1: AI Punya Asisten Bahasa (LSP) (created)
 
 ## API Service Catalog
 
@@ -108,8 +108,62 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 8.2 | Landlock launcher | Native addon | `grantArgs()`, `probe()`, `launcherPath()` | JS API seam for Landlock kernel sandbox (Linux 5.13+), static musl binaries |
 | 8.2 | Platform prebuilds | Native binary | `linux-x64`, `linux-arm64` optional deps | Per-platform Landlock launcher binaries (static musl) |
 | 8.2 | Sandbox escalation | Agent seam | `approveEscalation()`, `writableRoots()` | Sandbox escalation vocabulary with audit trail (enhanced from Phase 8.1) |
+| 9.1 | LSP seam | Agent seam | `ctx.lsp` | Abstract LSP capability (provider registry, extension mapping, normalized queries) |
+| 9.1 | LSP stdio provider | Provider | `LspConnection`, `LspInstance` | Stdio transport: spawns language servers, translates JSON-RPC |
+| 9.1 | LSP tool | Agent tool | `lsp(operation, file, line, character)` | goToDefinition, findReferences, goToImplementation, hover |
+| 9.1 | TypeScript LSP | Config | `npx typescript-language-server --stdio` | Default language server for .ts/.tsx/.js/.jsx |
 
 ## Deployed Phases
+
+### Phase 9.1 — AI Punya Asisten Bahasa (LSP)  ✅
+
+- **Version:** v0.9.0
+- **Date:** 2026-08-20
+- **What was deployed:** 3 LSP packages verified, built, and wired into the
+  `dsh-base` bundle:
+  - `@deepseek-ai/dsh-lsp` (packages/lsp/lsp/)
+    — Abstract LSP capability seam (`ctx.lsp`). Language-server provider
+    registry keyed by branded id, extension mapping, order-independent
+    per-query selection, normalized definition/references/implementation/
+    hover requests and results, LspError taxonomy.
+  - `@deepseek-ai/dsh-lsp-stdio` (packages/lsp/lsp-stdio/)
+    — Generic stdio language-server provider. Spawns configured servers,
+    translates JSON-RPC, serves goToDefinition/findReferences/
+    goToImplementation/hover queries in the host filesystem namespace.
+    Default config: TypeScript language server for .ts/.tsx/.js/.jsx.
+  - `@deepseek-ai/dsh-tool-lsp` (packages/lsp/tool-lsp/)
+    — Model-facing LSP tool. One read-only tool with 4 operations
+    (goToDefinition, findReferences, goToImplementation, hover), one-based
+    UTF-16 cursor coordinates, bounded location rendering, hover
+    normalization.
+- **What works:**
+  - LSP seam operational (`Lsp` class with `query` and `registerProvider`)
+  - Stdio provider spawns language servers and translates JSON-RPC
+  - Tool registers 4 operations: goToDefinition, findReferences, goToImplementation, hover
+  - TypeScript language server default config wired in `dsh-base` bundle
+  - LSP tool disabled in `dsh-web-app` bundle (host-only, not browser-surface)
+  - Headless boot: app starts with LSP plugins loaded, no FATAL errors
+- **Proof:** 215/215 unit tests passed (12 test files). All 3 packages load
+  at runtime with correct exports. Headless boot: exit 0, "Done", no FATAL.
+  LLM smoke test: OpenRouter API returned "Hello! I wish you happiness."
+- **Journey summary discrepancy:** All 4 listed packages had wrong paths.
+  `packages/fs/read/`, `packages/fs/grep/`, `packages/client/ui-lsp/` don't
+  exist. Real: `packages/lsp/lsp/`, `packages/lsp/lsp-stdio/`,
+  `packages/lsp/tool-lsp/`. FS dependencies already satisfied by Phase 3.1.
+- **Compliance:** LICENSE pass (all MIT), THIRD_PARTY_NOTICES pass, vendor
+  LICENSE intact (9/9), zero "DeepSeek" in user-visible UI strings (matches
+  are in test snapshots, README, package scope names — all internal).
+- **API Services produced:**
+  - Agent seam: `ctx.lsp` — abstract LSP capability (provider registry)
+  - Provider: `LspConnection`, `LspInstance` — stdio transport for language servers
+  - Agent tool: `lsp(operation, file, line, character)` — goToDefinition,
+    findReferences, goToImplementation, hover
+  - Config: TypeScript language server (npx typescript-language-server --stdio)
+- **Pipeline reports:**
+  - SAD → Bundle Manifest (3 packages + 1 missing, Phase 3.2 dep satisfied)
+  - Integrator → build success, 215/215 tests passed, typecheck pass
+  - Compliance → PASS (all MIT, branding clean)
+  - Verifier → PASS (8/8 tests: 5 AC + 3 smoke)
 
 ### Phase 8.2 — Sandboxing Native (Landlock)  ✅
 
@@ -960,14 +1014,13 @@ Updated by the Dokumenter after each phase (Rule 3).
 
 | Phase | Version | Title | Prerequisite | Status |
 |---|---|---|---|---|
-| 8.2 | v0.8.1 | Sandboxing Native (Landlock) | 8.1 | next |
-| 9.1 | v0.9.0 | AI Punya Asisten Bahasa (LSP) | 3.2 | pending |
-| 10.1 | v1.0.0 | AI Bisa Pakai Plugin Dinamis (Cordis) | 2.1 | next |
-| 10.2 | v1.0.1 | AI Bisa Pakai MCP Server | 2.1 | next |
-| 10.3 | v1.0.2 | AI Bisa Pakai E2B Sandbox Cloud | 8.1 | next |
-| 11.1 | v1.1.0 | AI Bisa Pakai Skill | 2.1 | next |
+| 9.1 | v0.9.0 | AI Punya Asisten Bahasa (LSP) | 3.2 | created |
+| 10.1 | v1.0.0 | AI Bisa Pakai Plugin Dinamis (Cordis) | 2.1 | pending |
+| 10.2 | v1.0.1 | AI Bisa Pakai MCP Server | 2.1 | pending |
+| 10.3 | v1.0.2 | AI Bisa Pakai E2B Sandbox Cloud | 8.1 | pending |
+| 11.1 | v1.1.0 | AI Bisa Pakai Skill | 2.1 | pending |
 
 ## How to continue
 
 Run `/deploy` again — the pipeline auto-detects the next pending phase.
-Phases 8.2 (Landlock Sandbox), 9.1 (LSP), 10.1 (Cordis Plugins), 10.2 (MCP Server), 10.3 (E2B Cloud), and 11.1 (Skills) are now unblocked.
+Phases 10.1 (Cordis Plugins), 10.2 (MCP Server), 10.3 (E2B Cloud), 11.1 (Skills), 11.2 (Persona), and 11.3 (Workflow) are now unblocked.

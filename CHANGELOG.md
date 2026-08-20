@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-08-20
+
+### Added — Phase 9.1: AI Punya Asisten Bahasa (LSP)
+
+- Abstract LSP capability seam (`@deepseek-ai/dsh-lsp`): language-server
+  provider registry keyed by branded id, extension mapping, normalized
+  definition/references/implementation/hover requests, LspError taxonomy.
+- Stdio language-server provider (`@deepseek-ai/dsh-lsp-stdio`): spawns
+  configured servers, translates JSON-RPC, serves goToDefinition/
+  findReferences/goToImplementation/hover queries.
+- Model-facing LSP tool (`@deepseek-ai/dsh-tool-lsp`): one read-only tool
+  with goToDefinition/findReferences/goToImplementation/hover operations,
+  one-based UTF-16 cursor coordinates, bounded location rendering.
+- LSP wired into `dsh-base` bundle (cordis.patch.yml) with TypeScript
+  language server default config.
+
+#### Compliance
+- License audit: pass
+- Branding check: pass
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed
+- Smoke tests: 3/3 passed
+- Unit tests: 215/215 passed (12 test files)
+
 ## [0.8.1] - 2026-08-20
 
 ### Added — Phase 8.2: Sandboxing Native (Landlock)
