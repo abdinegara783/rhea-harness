@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-20
+
+### Added — Phase 11.1: AI Bisa Pakai Skill
+
+- Skill registry (`@deepseek-ai/dsh-skill`): layered provider registry for
+  skill discovery, resolution, and loading. `SkillRegistry` (`ctx.skills`)
+  merges provider catalogs, resolves winning skills by name/rank, and exposes
+  sorted summaries and full definitions. Supports provider registration,
+  runtime skill registration, invocation policies (modelInvocable,
+  userInvocable), scope-layer isolation, and abort-safe cancellation.
+- System prompt assembly (`@deepseek-ai/dsh-system-prompt`): system prompt
+  builder that integrates skill content into agent context. Already present
+  from Phase 2.1, verified as skill injection backbone.
+- Skill UI (`@deepseek-ai/dsh-client-ui-skill`): browser-surface skill
+  reference plugin with `SkillRow` component for skill display in the
+  conversation UI. Client-side locale support for skill descriptions.
+- Filesystem seam (`@deepseek-ai/dsh-fs`): abstract filesystem capability
+  seam (`ctx.fs`) with vocabulary types and FileSystem service. Already
+  present from Phase 3.1, verified as skill file-reading foundation.
+- Skill filesystem provider (`@deepseek-ai/dsh-skill-filesystem`): discovers
+  SKILL.md files from `.agents/skills/` directories, parses YAML frontmatter
+  (name, description, whenToUse), and registers them as skill candidates.
+- Skill tool (`@deepseek-ai/dsh-tool-skill`): model-facing tool that loads
+  and renders skill content via `renderSkillContent()` for agent consumption.
+  Registered in `cordis.patch.yml` as `tool-skill`.
+
+#### Compliance
+- License audit: pass (all MIT, no new vendor packages)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed (SKILL.md detection, skills panel, AI skill usage, disable, frontmatter parsing)
+- Smoke tests: 4/4 passed (build clean, typecheck pass, packages load, SKILL.md format validated)
+- Build: host + client success, zero errors
+
 ## [1.0.2] - 2026-08-20
 
 ### Added — Phase 10.3: AI Bisa Pakai E2B Sandbox Cloud

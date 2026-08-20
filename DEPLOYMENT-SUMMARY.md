@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v1.0.2** — Phase 10.3: AI Bisa Pakai E2B Sandbox Cloud (created)
+**v1.1.0** — Phase 11.1: AI Bisa Pakai Skill (created)
 
 ## API Service Catalog
 
@@ -122,8 +122,66 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 10.3 | E2B subprocess | Provider | `SubprocessE2B` | Shell commands in E2B cloud with streaming output, signals |
 | 10.3 | Sandbox policy engine | Policy | `SandboxPolicy`, `SandboxVocabulary` | Declarative sandbox rules with escalation and root-trust boundaries |
 | 10.3 | Local sandbox executor | Provider | `LocalSandboxProvider` | On-machine process isolation with probe-based capability detection |
+| 11.1 | Skill registry | Agent seam | `ctx.skills` | Layered provider registry: `registerProvider()`, `register()`, `list()`, `get()`, `snapshot()` |
+| 11.1 | Skill filesystem provider | Provider | `skill-filesystem` | Discovers SKILL.md from `.agents/skills/`, parses YAML frontmatter (name, description, whenToUse) |
+| 11.1 | Skill tool | Agent tool | `skill` (via `tool-skill`) | Model-facing tool that loads and renders skill content (`<skill_content>` blocks) |
+| 11.1 | Skill list (RPC) | RPC | `POST /api/skill.list` | List available skills (already cataloged in 2.1, now verified with full provider chain) |
+| 11.1 | Skill UI row | Client component | `SkillRow` | Browser-surface skill display with locale support |
+| 11.1 | Skill invocation policy | Policy | `modelInvocable`, `userInvocable` | Per-skill invocation controls (enable/disable for model and user surfaces) |
 
 ## Deployed Phases
+
+### Phase 11.1 — AI Bisa Pakai Skill  ✅
+
+- **Version:** v1.1.0
+- **Date:** 2026-08-20
+- **What was deployed:** 6 packages verified and built:
+  - `@deepseek-ai/dsh-skill` (packages/skill/skill/)
+    — Layered provider registry (`ctx.skills`) for skill discovery,
+    resolution, and loading. Supports provider registration, runtime
+    skill registration, invocation policies, scope-layer isolation,
+    and abort-safe cancellation. 869 lines of well-typed TypeScript.
+  - `@deepseek-ai/dsh-system-prompt` (packages/core/system-prompt/)
+    — System prompt assembly integrating skill content into agent context.
+    Already present from Phase 2.1, verified as skill injection backbone.
+  - `@deepseek-ai/dsh-client-ui-skill` (packages/client/ui-skill/)
+    — Browser-surface skill reference plugin with `SkillRow` component
+    for skill display in conversation UI. Client-side locale support.
+  - `@deepseek-ai/dsh-fs` (packages/fs/fs/)
+    — Abstract filesystem capability seam (`ctx.fs`). Already present
+    from Phase 3.1, verified as skill file-reading foundation.
+  - `@deepseek-ai/dsh-skill-filesystem` (packages/skill/skill-filesystem/)
+    — SKILL.md discovery from `.agents/skills/` directories. Parses YAML
+    frontmatter (name, description, whenToUse) and registers candidates.
+  - `@deepseek-ai/dsh-tool-skill` (packages/skill/tool-skill/)
+    — Model-facing tool that loads and renders skill content via
+    `renderSkillContent()` producing `<skill_content>` blocks.
+    Registered in `cordis.patch.yml` as `tool-skill`.
+- **Build status:** success (host + client, zero errors)
+- **Typecheck:** pass
+- **API Services produced:**
+  | Service | Type | Endpoint / Method | Notes |
+  |---|---|---|---|
+  | Skill registry | Agent seam | `ctx.skills` | Provider registry with list/get/snapshot/register |
+  | Skill filesystem | Provider | `.agents/skills/*/SKILL.md` | Discovers and parses SKILL.md files |
+  | Skill tool | Agent tool | `skill` (tool-skill) | Model-facing skill loader/renderer |
+  | Skill list RPC | RPC | `POST /api/skill.list` | Verified with full provider chain |
+  | Skill UI | Client | `SkillRow` component | Browser-surface skill display |
+
+#### Compliance
+- License audit: pass (all MIT, no new vendor packages)
+- Branding check: pass (zero "DeepSeek" in user-visible UI strings)
+- Third-party notices: up-to-date
+
+#### Verification
+- Acceptance tests: 5/5 passed
+- Smoke tests: 4/4 passed
+- Build: zero errors, typecheck pass
+
+### Next
+
+- Phase 11.2 (v1.1.1) — AI Bisa Pakai Preset Persona (prereq 10.1 satisfied).
+- Phase 11.3 (v1.1.2) — AI Mendukung Workflow & Penjadwalan (prereq 5.3 satisfied).
 
 ### Phase 10.3 — AI Bisa Pakai E2B Sandbox Cloud  ✅
 
