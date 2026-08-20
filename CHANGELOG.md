@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-08-20
+
+### Added — Phase 3.2: Saya Bisa Edit File Lewat AI
+
+- Verified all 7 edit/write packages (already deployed in Phase 1.1):
+  `dsh-tool-fs` (write/edit tools), `dsh-tool-str-replace-editor`
+  (str_replace/insert), `dsh-fs-observation-policy` (read-before-edit),
+  `dsh-fs-sandbox` (write fences), `dsh-user-approval` (permission seam),
+  `dsh-repeat-tool-reminder` (guard), `dsh-tool-call-timeout-policy` (guard).
+- All tools registered in cordis.patch.yml (13 references).
+
+### SAD findings
+
+- Journey summary listed 6 packages, all with wrong paths.
+  `packages/fs/write/`, `packages/fs/edit/`, `packages/fs/patch/` don't exist.
+  Real: `tool-fs` (write/edit), `tool-str-replace-editor` (str_replace).
+  `packages/client/ui-diff/` and `packages/client/ui-approval/` don't exist.
+  Real: `packages/interaction/user-approval/`.
+
+### Verified (live RPC smoke test)
+
+- AC 1: AI called `edit` tool with old_string/new_string → diff produced — PASS
+- AC 2: File changed on disk ("Hello" → "Greetings") — PASS
+- AC 3: Read-before-edit enforced (AI read file before editing) — PASS
+- AC 4: `write` tool created new file (hello.txt) — PASS
+- AC 5: Only target file modified, verified by post-edit read — PASS
+- Compliance: All MIT, user-approval fail-closed, sandbox fences writes — PASS
+
+### Next
+
+- Phase 3.3 (v0.3.2) — Saya Bisa Cari di Isi File (prerequisite 3.1 satisfied).
+- Phase 4.1 (v0.4.0) — Saya Bisa Jalankan Perintah Shell (prereq 3.2 now satisfied).
+
 ## [0.3.0] - 2026-08-20
 
 ### Added — Phase 3.1: Saya Bisa Baca & Cari File

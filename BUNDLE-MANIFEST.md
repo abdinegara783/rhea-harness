@@ -1,74 +1,66 @@
-# Bundle Manifest — Phase 3.1
+# Bundle Manifest — Phase 3.2
 
 ## Phase
 
-- **Phase:** 3.1
-- **Version:** v0.3.0
-- **Tagline:** Saya Bisa Baca & Cari File
+- **Phase:** 3.2
+- **Version:** v0.3.1
+- **Tagline:** Saya Bisa Edit File Lewat AI
 - **Date:** 2026-08-20
 
 ## Features
 
 | ID | Description |
 |---|---|
-| F1 | AI can read file contents (read tool) |
-| F2 | AI can list files in a directory (list tool) |
-| F3 | AI can search files by name pattern (glob tool) |
-| F4 | AI can search file contents by text/regex (grep tool) |
-| F5 | Workspace folder can be set and managed |
+| F1 | AI can replace text in a file (str_replace) |
+| F2 | AI can insert lines at a specific position |
+| F3 | AI can create new files |
+| F4 | Read-before-edit policy enforced (observation policy) |
+| F5 | Write operations sandbox-fenced to workspace root |
+| F6 | User approval required for file mutations |
 
 ## Packages
 
 | Package | Path | Role |
 |---|---|---|
-| @deepseek-ai/dsh-fs | packages/fs/fs/ | Abstract filesystem capability seam (ctx.fs) — vocabulary types, FileSystem service |
-| @deepseek-ai/dsh-fs-local | packages/fs/fs-local/ | Local-filesystem implementation of ctx.fs |
-| @deepseek-ai/dsh-fs-sandbox | packages/fs/fs-sandbox/ | Sandbox-enforcing FS implementation (write fences by sandbox mode) |
-| @deepseek-ai/dsh-fs-observation-policy | packages/fs/fs-observation-policy/ | File-context policy plugin (observed-state, read-before-edit, version-guarded writes) |
-| @deepseek-ai/dsh-tool-fs | packages/fs/tool-fs/ | Model-facing filesystem tools (read, write, edit) over ctx.fs |
-| @deepseek-ai/dsh-tool-fs-search | packages/fs/tool-fs-search/ | Model-facing discovery tools (glob, grep) backed by packaged ripgrep |
-| @deepseek-ai/dsh-tool-str-replace-editor | packages/fs/tool-str-replace-editor/ | Model-facing view, create, replace, and line insert tools |
-| @deepseek-ai/dsh-workspace | packages/workspace/workspace/ | Workspace entity registry (ctx.workspaceRegistry) with durable records |
-| @deepseek-ai/dsh-client-ui-workspace | packages/client/ui-workspace/ | Workspace picker plugin (sidebar + empty-state slot) |
+| @deepseek-ai/dsh-tool-fs | packages/fs/tool-fs/ | Model-facing write/edit tools over ctx.fs |
+| @deepseek-ai/dsh-tool-str-replace-editor | packages/fs/tool-str-replace-editor/ | Model-facing str_replace/insert/view/create tools |
+| @deepseek-ai/dsh-fs-observation-policy | packages/fs/fs-observation-policy/ | Read-before-edit + version-guarded write policy |
+| @deepseek-ai/dsh-fs-sandbox | packages/fs/fs-sandbox/ | Sandbox-enforced write fences (workspace-write mode) |
+| @deepseek-ai/dsh-user-approval | packages/interaction/user-approval/ | Permission decisions (ask before file mutations) |
+| @deepseek-ai/dsh-repeat-tool-reminder | packages/guard/repeat-tool-reminder/ | Guard against repeated identical tool calls |
+| @deepseek-ai/dsh-tool-call-timeout-policy | packages/guard/timeout-policy/ | Timeout enforcement for tool calls |
 
 ## Dependencies
 
 | Phase | Status |
 |---|---|
-| 2.1 (Saya Bisa Chat dengan AI) | satisfied ✅ |
+| 3.1 (Saya Bisa Baca & Cari File) | satisfied ✅ |
 
 ## Acceptance Criteria
 
-1. "baca file package.json" → AI displays file contents
-2. "cari file *.ts di src/" → lists matching files
-3. "cari 'TODO' di semua file" → shows files & matching lines
-4. Set workspace folder → AI knows the context
-5. Relative & absolute paths both work
+1. "ubah README.md baris pertama" → AI shows diff
+2. Accept → changes applied
+3. Reject → cancelled
+4. "buat file baru.txt" → file created
+5. Edit does not corrupt other files
 
 ## Compliance Notes
 
-- FS access requires permission boundary disclosure
-- `@vscode/ripgrep` — MIT licensed, platform-specific binary packages
-- `koffi` (in dsh-fs-local) — MIT licensed (native FFI for atomic operations)
-- No DeepSeek branding in user-visible FS tool output
-
-## Runtime Dependency
-
-- `@vscode/ripgrep` — required by `dsh-tool-fs-search` for glob/grep at runtime.
-  Lazily loaded; build succeeds without it but search tools fail at runtime.
+- All packages MIT licensed
+- User-approval seam is fail-closed by default (secure)
+- Sandbox fences writes to workspace root (no escape)
+- Observation policy ensures read-before-edit (audit trail)
 
 ## Journey Summary Discrepancy
 
-The journey summary listed 7 packages with paths like `packages/fs/read/`,
-`packages/fs/list/`, `packages/fs/glob/`, `packages/fs/grep/`. These
-sub-paths do NOT exist. The real structure is:
-- `packages/fs/fs/` — abstract seam (combines read/list/write/edit vocabulary)
-- `packages/fs/fs-local/` — local FS implementation
-- `packages/fs/tool-fs/` — model-facing read/write/edit tools
-- `packages/fs/tool-fs-search/` — model-facing glob/grep tools
-- `packages/fs/tool-str-replace-editor/` — model-facing str-replace tools
-- `packages/fs/fs-sandbox/` — sandbox enforcement layer
-- `packages/fs/fs-observation-policy/` — observation policy layer
+Journey summary listed 6 packages with wrong paths:
+- `packages/fs/write/` → doesn't exist. Write/edit is in `packages/fs/tool-fs/`
+- `packages/fs/edit/` → doesn't exist. Edit is in `packages/fs/tool-fs/`
+- `packages/fs/patch/` → doesn't exist. Patch is in `packages/fs/tool-str-replace-editor/`
+- `packages/client/ui-diff/` → doesn't exist. No separate diff UI package
+- `packages/guard/` → exists but has `repeat-tool-reminder/` and `timeout-policy/`
+- `packages/client/ui-approval/` → doesn't exist. Real: `packages/interaction/user-approval/`
 
-The journey summary's `packages/client/workspace/` path is also wrong.
-Real path: `packages/client/ui-workspace/`.
+Real edit packages: tool-fs (write/edit), tool-str-replace-editor (str_replace/insert),
+fs-observation-policy (read-before-edit), fs-sandbox (write fences),
+user-approval (permission decisions), guard/* (tool guards).

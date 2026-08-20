@@ -5,7 +5,7 @@
 
 ## Current Version
 
-**v0.3.0** — Phase 3.1: Saya Bisa Baca & Cari File (created)
+**v0.3.1** — Phase 3.2: Saya Bisa Edit File Lewat AI (created)
 
 ## API Service Catalog
 
@@ -48,8 +48,38 @@ Updated by the Dokumenter after each phase (Rule 3).
 | 3.1 | FS grep tool | Agent tool | `grep(regex, cwd?)` | AI searches file contents by regex (needs @vscode/ripgrep) |
 | 3.1 | Str-replace editor | Agent tool | `view/create/str_replace/insert` | AI view, create, replace, insert file operations |
 | 3.1 | Workspace registry | RPC | `POST /api/workspace.{create,list,rename,delete}` | Workspace entity registry with durable records |
+| 3.2 | FS write tool | Agent tool | `write(file_path, content)` | AI creates files (confirmed: hello.txt created on disk) |
+| 3.2 | FS edit tool | Agent tool | `edit(file_path, old_string, new_string)` | AI replaces text in files with diff (confirmed: "Hello"→"Greetings") |
+| 3.2 | Observation policy | Policy | read-before-edit enforced | AI must read file before editing (audit trail) |
+| 3.2 | User approval | Policy | `ctx.approval` fail-closed | Permission seam for file mutations (ask policy) |
 
 ## Deployed Phases
+
+### Phase 3.2 — Saya Bisa Edit File Lewat AI  ✅
+
+- **Version:** v0.3.1
+- **Date:** 2026-08-20
+- **What was deployed:** No new packages — all 7 edit/write packages already
+  present from Phase 1.1. Verified write/edit tools work end-to-end.
+- **What works:**
+  - AI creates files via `write` tool (hello.txt created with correct content)
+  - AI edits files via `edit` tool (str_replace: "Hello" → "Greetings")
+  - Read-before-edit policy enforced (AI reads before editing)
+  - Diff metadata included in tool results
+  - Post-edit verification read confirms changes
+- **Proof:** Created session → "Create hello.txt" → `write` tool → file on disk.
+  Then "Replace Hello with Greetings" → `read` → `edit` → `read` → confirmed.
+- **Journey summary discrepancy:** All 6 listed packages had wrong paths.
+  Real: `tool-fs` (write/edit), `tool-str-replace-editor` (str_replace),
+  `interaction/user-approval` (not `client/ui-approval`).
+- **API Services produced:**
+  - Agent tools: `write` (create files), `edit` (str_replace in files)
+  - Policy: read-before-edit enforced, sandbox write fences active
+- **Pipeline reports:**
+  - SAD → `BUNDLE-MANIFEST.md`
+  - Integrator → 7/7 packages verified, 13 cordis references
+  - Compliance → PASS (all MIT, fail-closed approval)
+  - Verifier → PASS (5/5 AC, live write+edit smoke test)
 
 ### Phase 3.1 — Saya Bisa Baca & Cari File  ✅
 
